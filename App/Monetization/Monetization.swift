@@ -106,12 +106,12 @@ final class AdManager: ObservableObject {
 
     func prepareAds() async {
         let parameters = RequestParameters()
-        await withCheckedContinuation { continuation in
-            ConsentInformation.shared.requestConsentInfoUpdate(with: parameters) { [weak self] error in
-                if let error { self?.errorMessage = error.localizedDescription }
-                continuation.resume()
+        let consentError: Error? = await withCheckedContinuation { continuation in
+            ConsentInformation.shared.requestConsentInfoUpdate(with: parameters) { error in
+                continuation.resume(returning: error)
             }
         }
+        if let consentError { errorMessage = consentError.localizedDescription }
 
         do {
             try await ConsentForm.loadAndPresentIfRequired(from: nil)
@@ -126,7 +126,7 @@ final class AdManager: ObservableObject {
         if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
             _ = await ATTrackingManager.requestTrackingAuthorization()
         }
-        MobileAds.shared.start()
+        await MobileAds.shared.start()
         didStartAds = true
     }
 
@@ -155,7 +155,7 @@ struct PersistentAdStrip: View {
                         HouseBanner(purchaseManager: purchaseManager) { showingPurchase = true }
                         if adManager.canRequestAds {
                             let width = max(proxy.size.width, 320)
-                            let size = largeAnchoredAdaptiveBanner(width: width)
+                            let size = currentOrientationAnchoredAdaptiveBanner(width: width)
                             BannerViewContainer(adSize: size) { loaded in
                                 withAnimation(.easeInOut(duration: 0.2)) { adLoaded = loaded }
                             }
@@ -166,7 +166,7 @@ struct PersistentAdStrip: View {
                                 .onAppear { reserveBannerHeight(size.size.height) }
                                 .onChange(of: proxy.size.width) { _, newWidth in
                                     adLoaded = false
-                                    reserveBannerHeight(largeAnchoredAdaptiveBanner(width: max(newWidth, 320)).size.height)
+                                    reserveBannerHeight(currentOrientationAnchoredAdaptiveBanner(width: max(newWidth, 320)).size.height)
                                 }
                         }
                     }

@@ -51,7 +51,10 @@ for needle, message in [
     require(database, needle, message)
 
 require(monetization, "didFailToReceiveAdWithError", "the no-fill house-banner fallback is not wired")
+require(monetization, "await MobileAds.shared.start()", "Google Mobile Ads is not started with its async API")
+require(monetization, "currentOrientationAnchoredAdaptiveBanner(width:", "the Google Mobile Ads 12.x adaptive banner API is not wired")
 require(project, "productName = GoogleUserMessagingPlatform;", "the Google UMP Swift package product is misconfigured")
+forbid(monetization, "largeAnchoredAdaptiveBanner(width:", "Google Mobile Ads 13.x banner API is incompatible with the resolved 12.x package")
 forbid(monetization, "purchaseRemoval()", "obsolete StoreKit purchase method remains")
 forbid(content, "Basket Guard", "retired Basket Guard copy remains")
 forbid(content, "Product catalogue", "removed standalone Product Data settings row remains")

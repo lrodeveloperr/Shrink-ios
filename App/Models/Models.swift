@@ -61,22 +61,22 @@ enum QuantityUnit: String, CaseIterable, Identifiable, Codable, Hashable, Sendab
     static func parse(_ raw: String) -> QuantityUnit? {
         let value = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         switch value {
-        case "g", "gram", "grams", "gramo", "gramos", "gramme", "grammes": .gram
-        case "kg", "kilogram", "kilograms", "kilogramo", "kilogramos", "kilogramme", "kilogrammes": .kilogram
-        case "oz", "ounce", "ounces", "onza", "onzas": .ounce
-        case "lb", "lbs", "pound", "pounds", "libra", "libras", "livre", "livres": .pound
-        case "ml", "milliliter", "milliliters", "millilitre", "millilitres", "mililitro", "mililitros": .millilitre
-        case "l", "liter", "liters", "litre", "litres", "litro", "litros": .litre
-        case "fl oz", "floz", "fluid ounce", "fluid ounces", "onza líquida", "onzas líquidas", "once liquide", "onces liquides": .fluidOunce
-        case "sheet", "sheets", "hoja", "hojas", "feuille", "feuilles": .sheet
-        case "roll", "rolls", "rollo", "rollos", "rouleau", "rouleaux": .roll
-        case "load", "loads", "carga", "cargas", "brassée", "brassées": .load
-        case "pod", "pods", "cápsula", "cápsulas": .pod
-        case "wipe", "wipes", "toallita", "toallitas", "lingette", "lingettes": .wipe
-        case "bag", "bags", "bolsa", "bolsas", "sac", "sacs": .bag
-        case "capsule", "capsules", "pastilla", "pastillas", "comprimé", "comprimés": .capsule
-        case "item", "items", "count", "ct", "unit", "units", "piece", "pieces", "unidad", "unidades", "article", "articles": .item
-        default: nil
+        case "g", "gram", "grams", "gramo", "gramos", "gramme", "grammes": return .gram
+        case "kg", "kilogram", "kilograms", "kilogramo", "kilogramos", "kilogramme", "kilogrammes": return .kilogram
+        case "oz", "ounce", "ounces", "onza", "onzas": return .ounce
+        case "lb", "lbs", "pound", "pounds", "libra", "libras", "livre", "livres": return .pound
+        case "ml", "milliliter", "milliliters", "millilitre", "millilitres", "mililitro", "mililitros": return .millilitre
+        case "l", "liter", "liters", "litre", "litres", "litro", "litros": return .litre
+        case "fl oz", "floz", "fluid ounce", "fluid ounces", "onza líquida", "onzas líquidas", "once liquide", "onces liquides": return .fluidOunce
+        case "sheet", "sheets", "hoja", "hojas", "feuille", "feuilles": return .sheet
+        case "roll", "rolls", "rollo", "rollos", "rouleau", "rouleaux": return .roll
+        case "load", "loads", "carga", "cargas", "brassée", "brassées": return .load
+        case "pod", "pods", "cápsula", "cápsulas": return .pod
+        case "wipe", "wipes", "toallita", "toallitas", "lingette", "lingettes": return .wipe
+        case "bag", "bags", "bolsa", "bolsas", "sac", "sacs": return .bag
+        case "capsule", "capsules", "pastilla", "pastillas", "comprimé", "comprimés": return .capsule
+        case "item", "items", "count", "ct", "unit", "units", "piece", "pieces", "unidad", "unidades", "article", "articles": return .item
+        default: return nil
         }
     }
 }
