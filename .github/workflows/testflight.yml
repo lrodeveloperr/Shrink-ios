@@ -81,11 +81,11 @@ jobs:
         run: |
           set -euo pipefail
           project_file="$PROJECT/project.pbxproj"
-          grep -Fq "INFOPLIST_KEY_GADApplicationIdentifier = \"$TEST_ADMOB_APP_ID\";" "$project_file"
-          grep -Fq "INFOPLIST_KEY_GADBannerAdUnitID = \"$TEST_ADMOB_BANNER_ID\";" "$project_file"
+          info_plist="Config/Info.plist"
+          grep -Fq "INFOPLIST_FILE = Config/Info.plist;" "$project_file"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADApplicationIdentifier' "$info_plist")" == "$TEST_ADMOB_APP_ID" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADBannerAdUnitID' "$info_plist")" == "$TEST_ADMOB_BANNER_ID" ]]
           grep -Fq "static let removeAdsProductID = \"$REMOVE_BANNER_PRODUCT_ID\"" App/Monetization/Monetization.swift
-          test "$(grep -Fc "INFOPLIST_KEY_GADApplicationIdentifier = \"$TEST_ADMOB_APP_ID\";" "$project_file")" -eq 2
-          test "$(grep -Fc "INFOPLIST_KEY_GADBannerAdUnitID = \"$TEST_ADMOB_BANNER_ID\";" "$project_file")" -eq 2
 
       - name: Prepare App Store Connect credentials
         shell: bash

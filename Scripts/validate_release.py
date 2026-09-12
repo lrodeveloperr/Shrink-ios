@@ -23,6 +23,7 @@ models = (APP / "Models" / "Models.swift").read_text(encoding="utf-8")
 database = (APP / "Data" / "Database.swift").read_text(encoding="utf-8")
 monetization = (APP / "Monetization" / "Monetization.swift").read_text(encoding="utf-8")
 project = (ROOT / "ShrinkflationPriceScanner.xcodeproj" / "project.pbxproj").read_text(encoding="utf-8")
+info_plist = (ROOT / "Config" / "Info.plist").read_text(encoding="utf-8")
 
 for needle, message in [
     ("TabView(selection:", "native Scan/History/Impact tabs are missing"),
@@ -54,6 +55,11 @@ require(monetization, "didFailToReceiveAdWithError", "the no-fill house-banner f
 require(monetization, "await MobileAds.shared.start()", "Google Mobile Ads is not started with its async API")
 require(monetization, "currentOrientationAnchoredAdaptiveBanner(width:", "the Google Mobile Ads 12.x adaptive banner API is not wired")
 require(project, "productName = GoogleUserMessagingPlatform;", "the Google UMP Swift package product is misconfigured")
+require(project, "INFOPLIST_FILE = Config/Info.plist;", "the explicit release Info.plist is not configured")
+require(info_plist, "<key>GADApplicationIdentifier</key>", "the AdMob application key is missing from Info.plist")
+require(info_plist, "ca-app-pub-3940256099942544~1458002511", "the official Google sample application ID is missing from Info.plist")
+require(info_plist, "<key>GADBannerAdUnitID</key>", "the AdMob banner key is missing from Info.plist")
+require(info_plist, "ca-app-pub-3940256099942544/2435281174", "the official Google sample banner ID is missing from Info.plist")
 forbid(monetization, "largeAnchoredAdaptiveBanner(width:", "Google Mobile Ads 13.x banner API is incompatible with the resolved 12.x package")
 forbid(monetization, "purchaseRemoval()", "obsolete StoreKit purchase method remains")
 forbid(content, "Basket Guard", "retired Basket Guard copy remains")
