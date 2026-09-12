@@ -10,7 +10,7 @@
 		A00000000000000000000001 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A00000000000000000000011 /* libsqlite3.tbd */; };
 		A00000000000000000000002 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A00000000000000000000012 /* XCTest.framework */; };
 		A00000000000000000000003 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = A00000000000000000000071 /* GoogleMobileAds */; };
-		A00000000000000000000004 /* UserMessagingPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = A00000000000000000000072 /* UserMessagingPlatform */; };
+		A00000000000000000000004 /* GoogleUserMessagingPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = A00000000000000000000072 /* GoogleUserMessagingPlatform */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,7 +50,7 @@
 			files = (
 				A00000000000000000000001 /* libsqlite3.tbd in Frameworks */,
 				A00000000000000000000003 /* GoogleMobileAds in Frameworks */,
-				A00000000000000000000004 /* UserMessagingPlatform in Frameworks */,
+				A00000000000000000000004 /* GoogleUserMessagingPlatform in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,7 +114,7 @@
 			name = ShrinkflationPriceScanner;
 			packageProductDependencies = (
 				A00000000000000000000071 /* GoogleMobileAds */,
-				A00000000000000000000072 /* UserMessagingPlatform */,
+				A00000000000000000000072 /* GoogleUserMessagingPlatform */,
 			);
 			productName = ShrinkflationPriceScanner;
 			productReference = A00000000000000000000010 /* ShrinkflationPriceScanner.app */;
@@ -348,7 +348,7 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		A00000000000000000000071 /* GoogleMobileAds */ = {isa = XCSwiftPackageProductDependency; package = A00000000000000000000070 /* XCRemoteSwiftPackageReference */; productName = GoogleMobileAds; };
-		A00000000000000000000072 /* UserMessagingPlatform */ = {isa = XCSwiftPackageProductDependency; package = A00000000000000000000073 /* XCRemoteSwiftPackageReference */; productName = UserMessagingPlatform; };
+		A00000000000000000000072 /* GoogleUserMessagingPlatform */ = {isa = XCSwiftPackageProductDependency; package = A00000000000000000000073 /* XCRemoteSwiftPackageReference */; productName = GoogleUserMessagingPlatform; };
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A00000000000000000000050 /* Project object */;

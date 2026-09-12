@@ -22,6 +22,7 @@ content = (APP / "Features" / "ContentView.swift").read_text(encoding="utf-8")
 models = (APP / "Models" / "Models.swift").read_text(encoding="utf-8")
 database = (APP / "Data" / "Database.swift").read_text(encoding="utf-8")
 monetization = (APP / "Monetization" / "Monetization.swift").read_text(encoding="utf-8")
+project = (ROOT / "ShrinkflationPriceScanner.xcodeproj" / "project.pbxproj").read_text(encoding="utf-8")
 
 for needle, message in [
     ("TabView(selection:", "native Scan/History/Impact tabs are missing"),
@@ -50,6 +51,7 @@ for needle, message in [
     require(database, needle, message)
 
 require(monetization, "didFailToReceiveAdWithError", "the no-fill house-banner fallback is not wired")
+require(project, "productName = GoogleUserMessagingPlatform;", "the Google UMP Swift package product is misconfigured")
 forbid(monetization, "purchaseRemoval()", "obsolete StoreKit purchase method remains")
 forbid(content, "Basket Guard", "retired Basket Guard copy remains")
 forbid(content, "Product catalogue", "removed standalone Product Data settings row remains")
