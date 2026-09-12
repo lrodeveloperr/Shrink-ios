@@ -1,0 +1,243 @@
+name: Shrinkflation Price Scanner TestFlight
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type UPLOAD SHRINK TESTFLIGHT to confirm upload
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shrinkflation-price-scanner-testflight
+  cancel-in-progress: false
+
+env:
+  IOS_BUNDLE_ID: com.worksbienstudios.shrinkflationpricescanner
+  APPLE_TEAM_ID: 49SQ3XQ68Q
+  MARKETING_VERSION: '1.0'
+  SCHEME: ShrinkflationPriceScanner
+  PROJECT: ShrinkflationPriceScanner.xcodeproj
+  ARCHIVE_PATH: ${{ github.workspace }}/build/ShrinkflationPriceScanner.xcarchive
+  EXPORT_PATH: ${{ github.workspace }}/build/export
+  TEST_ADMOB_APP_ID: ca-app-pub-3940256099942544~1458002511
+  TEST_ADMOB_BANNER_ID: ca-app-pub-3940256099942544/2435281174
+  REMOVE_BANNER_PRODUCT_ID: com.worksbienstudios.shrinkflationpricescanner.removeads
+
+jobs:
+  upload:
+    name: Compile, sign, and upload reviewed build
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'workflow_dispatch' ||
+       contains(github.event.head_commit.message, '[upload-shrink-testflight]'))
+    runs-on: macos-26
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out reviewed source
+        uses: actions/checkout@v7
+
+      - name: Confirm upload and assign build number
+        shell: bash
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            [[ "$CONFIRMATION" == "UPLOAD SHRINK TESTFLIGHT" ]] || {
+              echo 'Confirmation must exactly match UPLOAD SHRINK TESTFLIGHT.' >&2
+              exit 1
+            }
+          fi
+          build_number="$GITHUB_RUN_NUMBER"
+          [[ "$build_number" =~ ^[1-9][0-9]{0,17}$ ]]
+          echo "BUILD_NUMBER=$build_number" >> "$GITHUB_ENV"
+
+      - name: Select Xcode
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -d /Applications/Xcode_26.6.app ]]; then
+            sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
+          fi
+          xcodebuild -version
+
+      - name: Static release checks only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Scripts/check_localizations.py
+          python3 Scripts/validate_release.py
+
+      - name: Verify TestFlight monetization configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          project_file="$PROJECT/project.pbxproj"
+          grep -Fq "INFOPLIST_KEY_GADApplicationIdentifier = \"$TEST_ADMOB_APP_ID\";" "$project_file"
+          grep -Fq "INFOPLIST_KEY_GADBannerAdUnitID = \"$TEST_ADMOB_BANNER_ID\";" "$project_file"
+          grep -Fq "static let removeAdsProductID = \"$REMOVE_BANNER_PRODUCT_ID\"" App/Monetization/Monetization.swift
+          test "$(grep -Fc "INFOPLIST_KEY_GADApplicationIdentifier = \"$TEST_ADMOB_APP_ID\";" "$project_file")" -eq 2
+          test "$(grep -Fc "INFOPLIST_KEY_GADBannerAdUnitID = \"$TEST_ADMOB_BANNER_ID\";" "$project_file")" -eq 2
+
+      - name: Prepare App Store Connect credentials
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          missing=()
+          [[ -n "$ASC_KEY_ID" ]] || missing+=(ASC_KEY_ID)
+          [[ -n "$ASC_ISSUER_ID" ]] || missing+=(ASC_ISSUER_ID)
+          [[ -n "$ASC_PRIVATE_KEY" ]] || missing+=(ASC_PRIVATE_KEY)
+          (( ${#missing[@]} == 0 )) || {
+            echo "Missing repository Actions secrets: ${missing[*]}" >&2
+            exit 1
+          }
+          key_dir="$HOME/.appstoreconnect/private_keys"
+          key_path="$key_dir/AuthKey_${ASC_KEY_ID}.p8"
+          mkdir -p "$key_dir"
+          chmod 700 "$key_dir"
+          umask 077
+          printf '%s' "$ASC_PRIVATE_KEY" > "$key_path"
+          chmod 600 "$key_path"
+          grep -Fq -- '-----BEGIN PRIVATE KEY-----' "$key_path"
+          grep -Fq -- '-----END PRIVATE KEY-----' "$key_path"
+          echo "ASC_KEY_PATH=$key_path" >> "$GITHUB_ENV"
+
+      - name: Resolve Swift packages
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -resolvePackageDependencies \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Compile generic Release archive
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          rm -rf "$ARCHIVE_PATH" "$EXPORT_PATH"
+          mkdir -p "$(dirname "$ARCHIVE_PATH")" "$EXPORT_PATH"
+          xcodebuild \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$ARCHIVE_PATH" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            PRODUCT_BUNDLE_IDENTIFIER="$IOS_BUNDLE_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            MARKETING_VERSION="$MARKETING_VERSION" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            clean archive
+
+      - name: Verify signed archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          app="$(find "$ARCHIVE_PATH/Products/Applications" -maxdepth 1 -type d -name '*.app' -print -quit)"
+          [[ -n "$app" ]] || { echo 'Archived app was not found.' >&2; exit 1; }
+          plist="$app/Info.plist"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist")" == "$IOS_BUNDLE_ID" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$plist")" == "$MARKETING_VERSION" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$plist")" == "$BUILD_NUMBER" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADApplicationIdentifier' "$plist")" == "$TEST_ADMOB_APP_ID" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADBannerAdUnitID' "$plist")" == "$TEST_ADMOB_BANNER_ID" ]]
+          [[ -f "$app/PrivacyInfo.xcprivacy" ]]
+          codesign --verify --deep --strict --verbose=2 "$app"
+          signature="$(codesign -dvv "$app" 2>&1)"
+          [[ "$signature" != *'Signature=adhoc'* ]]
+          [[ "$signature" == *'Authority=Apple Development'* || "$signature" == *'Authority=Apple Distribution'* ]]
+          [[ "$signature" == *"TeamIdentifier=$APPLE_TEAM_ID"* ]]
+
+      - name: Export signed IPA
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          options="$RUNNER_TEMP/ExportOptions.plist"
+          cat > "$options" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>export</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>teamID</key><string>$APPLE_TEAM_ID</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+            <key>uploadSymbols</key><true/>
+          </dict></plist>
+          PLIST
+          xcodebuild \
+            -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportPath "$EXPORT_PATH" \
+            -exportOptionsPlist "$options" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          ipa="$(find "$EXPORT_PATH" -maxdepth 1 -type f -name '*.ipa' -print -quit)"
+          [[ -n "$ipa" ]] || { echo 'IPA export failed.' >&2; exit 1; }
+          echo "IPA_PATH=$ipa" >> "$GITHUB_ENV"
+
+          verify="$RUNNER_TEMP/ipa-verify"
+          mkdir -p "$verify"
+          ditto -x -k "$ipa" "$verify"
+          exported_app="$(find "$verify/Payload" -maxdepth 1 -type d -name '*.app' -print -quit)"
+          [[ -n "$exported_app" ]] || { echo 'Exported app was not found.' >&2; exit 1; }
+          codesign --verify --deep --strict --verbose=2 "$exported_app"
+          signature="$(codesign -dvv "$exported_app" 2>&1)"
+          [[ "$signature" != *'Signature=adhoc'* ]]
+          [[ "$signature" == *'Authority=Apple Distribution'* ]]
+          [[ "$signature" == *"TeamIdentifier=$APPLE_TEAM_ID"* ]]
+          exported_plist="$exported_app/Info.plist"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$exported_plist")" == "$IOS_BUNDLE_ID" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADApplicationIdentifier' "$exported_plist")" == "$TEST_ADMOB_APP_ID" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADBannerAdUnitID' "$exported_plist")" == "$TEST_ADMOB_BANNER_ID" ]]
+
+      - name: Validate and upload to TestFlight
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          xcrun altool --validate-app --type ios --file "$IPA_PATH" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+          xcrun altool --upload-app --type ios --file "$IPA_PATH" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Retain exact uploaded IPA
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Shrinkflation-Price-Scanner-TestFlight-${{ env.BUILD_NUMBER }}
+          path: ${{ env.IPA_PATH }}
+          if-no-files-found: error
+          retention-days: 7

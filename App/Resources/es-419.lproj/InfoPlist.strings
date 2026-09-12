@@ -1,0 +1,3 @@
+"CFBundleDisplayName" = "Escáner de reduflación";
+"NSCameraUsageDescription" = "Escanea códigos de barras, cantidades de los empaques y precios en góndola.";
+"NSUserTrackingUsageDescription" = "Permite el rastreo para recibir anuncios más relevantes. La app funciona aunque lo rechaces.";

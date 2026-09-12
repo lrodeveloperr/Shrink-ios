@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>home.items_added</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@items@</string>
+        <key>items</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>%lld product scanned</string>
+            <key>other</key>
+            <string>%lld products scanned</string>
+        </dict>
+    </dict>
+    <key>trip.items</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@items@</string>
+        <key>items</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>%lld product</string>
+            <key>other</key>
+            <string>%lld products</string>
+        </dict>
+    </dict>
+    <key>radar.caught_today_format</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@items@</string>
+        <key>items</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>lld</string>
+            <key>one</key>
+            <string>%lld caught today</string>
+            <key>other</key>
+            <string>%lld caught today</string>
+        </dict>
+    </dict>
+</dict>
+</plist>

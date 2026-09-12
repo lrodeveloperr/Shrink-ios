@@ -1,0 +1,3 @@
+"CFBundleDisplayName" = "Shrinkflation Scanner";
+"NSCameraUsageDescription" = "Scan product barcodes, package amounts, and shelf prices.";
+"NSUserTrackingUsageDescription" = "Allow tracking for more relevant ads. The app still works if you decline.";
