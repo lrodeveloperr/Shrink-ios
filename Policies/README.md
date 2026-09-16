@@ -35,5 +35,5 @@ These policies describe iOS version 1.0 build 8 for the United States and Puerto
 - Spanish privacy: `https://worksbienstudios.com/apps/shrinkflation-price-scanner/es-419/privacy/`
 - Spanish terms: `https://worksbienstudios.com/apps/shrinkflation-price-scanner/es-419/terms/`
 
-The app builds these routes from `AppLinks` and the active in-app language. French-Canadian routes are intentionally retired.
+The app builds these routes from `AppLinks` and the active in-app language. Only English and Puerto Rico-aware Spanish routes are published.
 
