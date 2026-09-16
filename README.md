@@ -24,6 +24,13 @@ Native SwiftUI utility for detecting package-size and unit-price changes without
 
 The project uses Swift Package Manager for Google Mobile Ads and Google User Messaging Platform. Google's official sample identifiers are retained for pre-release validation. Sample-ad mode bypasses UMP entirely; invalid advertising configuration fails safely to the WorksBien house banner. Replace sample identifiers only for an approved production App Store archive.
 
+## Policies and App Store materials
+
+- `Policies/` contains the controlled US English and Puerto Rico Spanish privacy and terms sources.
+- `WebsitePolicies/` is generated from those sources for the public routes already used by the app.
+- `AppStoreConnect/` contains the finalized non-media listing, in-app-purchase localizations, privacy answer pack, review notes, and bilingual TestFlight material.
+- TestFlight material is documentation only. It is not connected to App Store Connect, does not select a build, and cannot upload or submit anything.
+
 ## Build the official offline catalogue
 
 Download `FoodData_Central_branded_food_csv_2026-04-30.zip` from USDA FoodData Central, then run:
@@ -53,7 +60,7 @@ git diff --check
 
 `--database-only` must be explicit and validates the catalogue identity plus every source-gated display output. For the full independent source comparison, pass the locked USDA archive with `--archive` instead.
 
-The catalogue builder and release validator also run read-only SQLite integrity, coverage, barcode, provenance, duplicate, correction, and semantic-expression audits. Xcode builds, Swift tests, simulators, devices, TestFlight uploads, workflow dispatches, and remote pushes are intentionally outside this reconstruction.
+The catalogue builder and release validator also run read-only SQLite integrity, coverage, barcode, provenance, duplicate, correction, and semantic-expression audits. Xcode builds, Swift tests, simulators, devices, and TestFlight uploads remain explicit release gates.
 
 The completed full-archive comparison and deterministic rebuild evidence is recorded in `USDA_VALIDATION_2026-04-30.md`.
 

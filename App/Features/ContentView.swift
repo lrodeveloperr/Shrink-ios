@@ -1040,7 +1040,7 @@ struct SettingsView: View {
             }
             Section(AppLocalization.text("settings.help")) {
                 NavigationLink(AppLocalization.text("settings.how_it_works")) { PolicyTextView(title: AppLocalization.text("settings.how_it_works"), text: AppLocalization.text("policy.how_it_works")) }
-                Link(AppLocalization.text("Support"), destination: URL(string: "https://worksbienstudios.com/customerservice")!)
+                Link(AppLocalization.text("Support"), destination: AppLinks.support)
             }
             Section(AppLocalization.text("settings.legal")) {
                 Link(destination: AppLinks.privacyPolicy) {

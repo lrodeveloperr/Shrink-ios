@@ -24,6 +24,8 @@ enum AppLocalization {
 enum AppLinks {
     private static let policyOrigin = "https://worksbienstudios.com/apps/shrinkflation-price-scanner"
 
+    static let support = URL(string: "https://worksbienstudios.com/customerservice")!
+
     static var privacyPolicy: URL {
         policyURL(document: "privacy")
     }

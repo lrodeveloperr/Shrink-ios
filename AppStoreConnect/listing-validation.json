@@ -1,0 +1,498 @@
+{
+  "decision": "BLOCKED",
+  "robot_compliance_coverage": {
+    "passed": 337,
+    "total": 409,
+    "percent": 82.4
+  },
+  "aso_execution_coverage": {
+    "passed": 166,
+    "total": 174,
+    "percent": 95.4
+  },
+  "blocker_count": 80,
+  "blockers": [
+    {
+      "domain": "aso",
+      "gate_id": "aso_context.current_result_landscape_reviewed",
+      "passed": false,
+      "message": "current_result_landscape_reviewed must be true and backed by evidence"
+    },
+    {
+      "domain": "aso",
+      "gate_id": "aso_context.baseline_recorded",
+      "passed": false,
+      "message": "baseline_recorded must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[0].authentic_ui",
+      "passed": false,
+      "message": "authentic_ui must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[0].dimensions_verified_against_current_apple_spec",
+      "passed": false,
+      "message": "dimensions_verified_against_current_apple_spec must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[0].color_profile_verified_against_current_apple_spec",
+      "passed": false,
+      "message": "color_profile_verified_against_current_apple_spec must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[0].sample_data_consistent",
+      "passed": false,
+      "message": "sample_data_consistent must be true and backed by evidence"
+    },
+    {
+      "domain": "aso",
+      "gate_id": "screenshots[0].localized_copy_checked",
+      "passed": false,
+      "message": "localized_copy_checked must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[0].claims_supported",
+      "passed": false,
+      "message": "claims_supported must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[0].paid_feature_disclosed_if_needed",
+      "passed": false,
+      "message": "paid_feature_disclosed_if_needed must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[0].no_other_platform_imagery",
+      "passed": false,
+      "message": "no_other_platform_imagery must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[1].authentic_ui",
+      "passed": false,
+      "message": "authentic_ui must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[1].dimensions_verified_against_current_apple_spec",
+      "passed": false,
+      "message": "dimensions_verified_against_current_apple_spec must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[1].color_profile_verified_against_current_apple_spec",
+      "passed": false,
+      "message": "color_profile_verified_against_current_apple_spec must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[1].sample_data_consistent",
+      "passed": false,
+      "message": "sample_data_consistent must be true and backed by evidence"
+    },
+    {
+      "domain": "aso",
+      "gate_id": "screenshots[1].localized_copy_checked",
+      "passed": false,
+      "message": "localized_copy_checked must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[1].claims_supported",
+      "passed": false,
+      "message": "claims_supported must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[1].paid_feature_disclosed_if_needed",
+      "passed": false,
+      "message": "paid_feature_disclosed_if_needed must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[1].no_other_platform_imagery",
+      "passed": false,
+      "message": "no_other_platform_imagery must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[2].authentic_ui",
+      "passed": false,
+      "message": "authentic_ui must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[2].dimensions_verified_against_current_apple_spec",
+      "passed": false,
+      "message": "dimensions_verified_against_current_apple_spec must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[2].color_profile_verified_against_current_apple_spec",
+      "passed": false,
+      "message": "color_profile_verified_against_current_apple_spec must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[2].sample_data_consistent",
+      "passed": false,
+      "message": "sample_data_consistent must be true and backed by evidence"
+    },
+    {
+      "domain": "aso",
+      "gate_id": "screenshots[2].localized_copy_checked",
+      "passed": false,
+      "message": "localized_copy_checked must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[2].claims_supported",
+      "passed": false,
+      "message": "claims_supported must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[2].paid_feature_disclosed_if_needed",
+      "passed": false,
+      "message": "paid_feature_disclosed_if_needed must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[2].no_other_platform_imagery",
+      "passed": false,
+      "message": "no_other_platform_imagery must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[3].authentic_ui",
+      "passed": false,
+      "message": "authentic_ui must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[3].dimensions_verified_against_current_apple_spec",
+      "passed": false,
+      "message": "dimensions_verified_against_current_apple_spec must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[3].color_profile_verified_against_current_apple_spec",
+      "passed": false,
+      "message": "color_profile_verified_against_current_apple_spec must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[3].sample_data_consistent",
+      "passed": false,
+      "message": "sample_data_consistent must be true and backed by evidence"
+    },
+    {
+      "domain": "aso",
+      "gate_id": "screenshots[3].localized_copy_checked",
+      "passed": false,
+      "message": "localized_copy_checked must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[3].claims_supported",
+      "passed": false,
+      "message": "claims_supported must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[3].paid_feature_disclosed_if_needed",
+      "passed": false,
+      "message": "paid_feature_disclosed_if_needed must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "screenshots[3].no_other_platform_imagery",
+      "passed": false,
+      "message": "no_other_platform_imagery must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "source_control.final_release_build_inspected",
+      "passed": false,
+      "message": "final_release_build_inspected must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "source_control.signed_archive_inspected",
+      "passed": false,
+      "message": "signed_archive_inspected must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "source_control.public_policies_inspected",
+      "passed": false,
+      "message": "public_policies_inspected must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "source_control.facts_reconciled",
+      "passed": false,
+      "message": "facts_reconciled must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "source_control.unresolved_conflicts",
+      "passed": false,
+      "message": "unresolved_conflicts must be an empty list"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "privacy.app_privacy_answers_match_final_build",
+      "passed": false,
+      "message": "app_privacy_answers_match_final_build must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "privacy.privacy_manifest_checked_in_final_archive",
+      "passed": false,
+      "message": "privacy_manifest_checked_in_final_archive must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "privacy.required_reason_apis_checked",
+      "passed": false,
+      "message": "required_reason_apis_checked must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "privacy.sdk_signatures_checked",
+      "passed": false,
+      "message": "sdk_signatures_checked must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "privacy.tracking_declaration_accurate",
+      "passed": false,
+      "message": "tracking_declaration_accurate must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "monetization.product_review_assets_prepared",
+      "passed": false,
+      "message": "product_review_assets_prepared must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "monetization.storekit_error_states_tested",
+      "passed": false,
+      "message": "storekit_error_states_tested must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "monetization.ads.privacy_disclosures_match",
+      "passed": false,
+      "message": "privacy_disclosures_match must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "monetization.ads.tracking_and_consent_resolved",
+      "passed": false,
+      "message": "tracking_and_consent_resolved must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "monetization.ads.production_ad_configuration_verified",
+      "passed": false,
+      "message": "production_ad_configuration_verified must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "monetization.products[0].localized_metadata_complete",
+      "passed": false,
+      "message": "localized_metadata_complete must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "monetization.products[0].review_screenshot_prepared",
+      "passed": false,
+      "message": "review_screenshot_prepared must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "review.contact_complete",
+      "passed": false,
+      "message": "contact_complete must be true and backed by evidence"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.1.5",
+      "passed": false,
+      "message": "1.5 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.2.1",
+      "passed": false,
+      "message": "2.1 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.2.3",
+      "passed": false,
+      "message": "2.3 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.2.3.3",
+      "passed": false,
+      "message": "2.3.3 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.2.3.4",
+      "passed": false,
+      "message": "2.3.4 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.2.3.6",
+      "passed": false,
+      "message": "2.3.6 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.2.3.8",
+      "passed": false,
+      "message": "2.3.8 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.2.3.9",
+      "passed": false,
+      "message": "2.3.9 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.2.5",
+      "passed": false,
+      "message": "2.5 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.2.5.18",
+      "passed": false,
+      "message": "2.5.18 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.3.1",
+      "passed": false,
+      "message": "3.1 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.3.1.1",
+      "passed": false,
+      "message": "3.1.1 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.5.1",
+      "passed": false,
+      "message": "5.1 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.5.1.1",
+      "passed": false,
+      "message": "5.1.1 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.5.1.2",
+      "passed": false,
+      "message": "5.1.2 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "guideline_review.5.1.4",
+      "passed": false,
+      "message": "5.1.4 needs pass/n_a plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.app_stability",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.metadata_build_parity",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.screenshots_authentic_current",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.legal_urls_live",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.app_privacy_answers_match_build_and_sdks",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.privacy_manifest_archive_checked",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.required_reason_apis_and_sdk_signatures_checked",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.age_rating_accurate",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.accessibility_device_locale_rtl_checked",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "compliance",
+      "gate_id": "compliance_controls.contact_information_current",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "aso",
+      "gate_id": "aso_controls.three_frame_visual_story",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    },
+    {
+      "domain": "aso",
+      "gate_id": "aso_controls.baseline_metrics_recorded",
+      "passed": false,
+      "message": "control needs pass plus concrete evidence; found blocked"
+    }
+  ],
+  "warnings": [],
+  "disclaimer": "100% means declared checklist coverage, not guaranteed App Review approval or search rank."
+}

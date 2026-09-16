@@ -1,0 +1,1175 @@
+{
+  "schema_version": "1.0",
+  "mode": "draft",
+  "app": {
+    "platform": "ios",
+    "bundle_id": "com.worksbienstudios.shrinkflationpricescanner",
+    "version": "1.0",
+    "company_name": "WorksBien Studios Inc.",
+    "release_kind": "new",
+    "primary_category": "Shopping",
+    "category_verified_in_current_app_store_connect": true,
+    "supported_devices": [
+      "iphone",
+      "ipad"
+    ],
+    "requires_account": false,
+    "requires_hardware": false
+  },
+  "source_control": {
+    "final_release_build_inspected": false,
+    "signed_archive_inspected": false,
+    "app_store_connect_inspected": true,
+    "public_policies_inspected": false,
+    "official_apple_sources_refreshed": true,
+    "fact_ledger_complete": true,
+    "facts_reconciled": false,
+    "final_build_identifier": "Source commit pending final policy/listing commit; signed archive not created",
+    "evidence_index": "README.md; Policies/README.md; AppStoreConnect/; App/; Config/Info.plist",
+    "final_build_reviewed_on": "2026-09-16",
+    "app_store_connect_snapshot_date": "2026-09-16",
+    "official_sources_reviewed_on": "2026-09-16",
+    "unresolved_conflicts": [
+      "Current source uses Google sample ad identifiers; a production App Store build needs verified production identifiers.",
+      "Privacy manifest, embedded SDK manifests and App Privacy answers require signed-archive reconciliation.",
+      "Screenshots and previews were explicitly outside this non-media run.",
+      "App Review contact and TestFlight feedback email are owner-supplied and still missing.",
+      "Final device, accessibility and StoreKit sandbox testing is not complete."
+    ]
+  },
+  "aso_context": {
+    "primary_intent": "Compare package size and unit value while grocery shopping",
+    "secondary_intent": "Keep a searchable private history of product checks",
+    "experiment_hypothesis": "A subtitle centered on package size and value will improve qualified product-page conversion without changing the verified feature promise.",
+    "restricted_terms_reviewed": true,
+    "restricted_terms": [],
+    "target_locales_researched": true,
+    "current_result_landscape_reviewed": false,
+    "baseline_recorded": false,
+    "review_support_language_reviewed": true
+  },
+  "locales": [
+    {
+      "locale": "en-US",
+      "name": "Shrinkflation Price Scanner",
+      "subtitle": "Track package size and value",
+      "promotional_text": "Scan a barcode, record today's package amount and shelf price, and compare it with your saved history-right in the aisle, with no account required.",
+      "description": "Know what your dollar buys before you decide.\n\nShrinkflation Price Scanner helps you compare package amount and unit cost over time. Scan a barcode or enter a product manually, record today's package amount and shelf price, then save what you decided.\n\nYour first check creates a baseline. On a later trip, the app compares the same product family and can show less product, a higher unit cost, better value, or no meaningful change.\n\nCHECK THE EVIDENCE\n\n- Look up supported barcodes in a built-in catalogue of 426,044 selected US branded-food products from USDA FoodData Central.\n- Record in-store or online prices as regular, sale, or member prices.\n- Link an unknown or changed barcode to a product you have already saved.\n- Search and filter your on-device history.\n- Edit decisions, delete checks, and undo a deletion for eight seconds.\n- See estimated extra cost paid or avoided based on your recorded decision and quantity.\n\nBUILT FOR THE US AND PUERTO RICO\n\nMoney is shown in dollars. The app supports English and Spanish tailored for Puerto Rico, with supermarket choices ordered for the detected US or Puerto Rico region.\n\nPRIVACY AND ACCESS\n\nNo account is required. The catalogue and comparison tools use data bundled with the app. Saved price checks are stored locally on the device. Camera permission is used only when you choose to scan a barcode or shelf-price label.\n\nThe app includes a fixed banner. An optional one-time in-app purchase removes that banner. The localized purchase price appears in the app.",
+      "keywords": [
+        "grocery",
+        "barcode",
+        "unit",
+        "cost",
+        "food",
+        "supermarket",
+        "shopping",
+        "history",
+        "quantity",
+        "USDA",
+        "aisle"
+      ],
+      "support_url": "https://worksbienstudios.com/customerservice",
+      "privacy_url": "https://worksbienstudios.com/apps/shrinkflation-price-scanner/en/privacy/",
+      "marketing_url": "",
+      "whats_new": "",
+      "native_language_reviewed": true,
+      "ui_locale_matches": true,
+      "no_stray_language_confirmed": true,
+      "claims_supported": true,
+      "paid_features_disclosed_if_needed": true
+    },
+    {
+      "locale": "es-MX",
+      "name": "Escáner de reduflación",
+      "subtitle": "Compara empaque y valor",
+      "promotional_text": "Escanea el código, registra la cantidad actual del empaque y el precio en la etiqueta, y compáralos con tu historial guardado, sin crear una cuenta.",
+      "description": "Ten claro qué recibes por tu dinero antes de decidir.\n\nShrinkflation Price Scanner te ayuda a comparar la cantidad del empaque y el costo por unidad con el paso del tiempo. Escanea un código de barras o ingresa un producto manualmente, registra la cantidad actual y el precio en la etiqueta, y guarda lo que decidiste.\n\nLa primera revisión crea la base de comparación. En una compra posterior, la app compara la misma familia de productos y puede mostrar si el empaque trae menos, si subió el costo por unidad, si encontraste mejor valor o si no hubo un cambio importante.\n\nREVISA LA EVIDENCIA\n\n- Consulta códigos compatibles en un catálogo integrado de 426,044 alimentos de marca seleccionados para Estados Unidos de USDA FoodData Central.\n- Registra precios en tienda o en línea, ya sean regulares, de oferta o para miembros.\n- Vincula un código desconocido o nuevo con un producto que ya guardaste.\n- Busca y filtra tu historial guardado en el dispositivo.\n- Edita tus decisiones, elimina comparaciones y deshaz una eliminación durante ocho segundos.\n- Consulta el costo adicional pagado o evitado que la app estima según tu decisión y la cantidad.\n\nCREADA PARA ESTADOS UNIDOS Y PUERTO RICO\n\nLos montos aparecen en dólares. La app está en inglés y en español adaptado para Puerto Rico, y ordena los supermercados según la región detectada.\n\nPRIVACIDAD Y ACCESO\n\nNo necesitas crear una cuenta. El catálogo y las comparaciones usan datos incluidos en la app. Tus comparaciones se guardan localmente en el dispositivo. La app solicita acceso a la cámara solo cuando decides escanear un código o una etiqueta de precio.\n\nLa app incluye un banner fijo. Una compra opcional de un solo pago dentro de la app elimina ese banner. El precio localizado aparece en la app.",
+      "keywords": [
+        "precio",
+        "unidad",
+        "supermercado",
+        "compras",
+        "código",
+        "barras",
+        "alimentos",
+        "historial",
+        "cantidad",
+        "shrinkflation"
+      ],
+      "support_url": "https://worksbienstudios.com/customerservice",
+      "privacy_url": "https://worksbienstudios.com/apps/shrinkflation-price-scanner/es-419/privacy/",
+      "marketing_url": "",
+      "whats_new": "",
+      "native_language_reviewed": true,
+      "ui_locale_matches": true,
+      "no_stray_language_confirmed": true,
+      "claims_supported": true,
+      "paid_features_disclosed_if_needed": true
+    }
+  ],
+  "screenshot_count_override_reason": "The user explicitly limited this run to non-media listing fields; media remains a separate release gate.",
+  "required_screenshot_sets": [
+    {
+      "locale": "en-US",
+      "device": "iphone",
+      "expected_count": 1,
+      "accepted_dimensions": [
+        [
+          1290,
+          2796
+        ]
+      ]
+    },
+    {
+      "locale": "en-US",
+      "device": "ipad",
+      "expected_count": 1,
+      "accepted_dimensions": [
+        [
+          1290,
+          2796
+        ]
+      ]
+    },
+    {
+      "locale": "es-MX",
+      "device": "iphone",
+      "expected_count": 1,
+      "accepted_dimensions": [
+        [
+          1290,
+          2796
+        ]
+      ]
+    },
+    {
+      "locale": "es-MX",
+      "device": "ipad",
+      "expected_count": 1,
+      "accepted_dimensions": [
+        [
+          1290,
+          2796
+        ]
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "locale": "en-US",
+      "device": "iphone",
+      "position": 1,
+      "story_role": "outcome",
+      "caption": "Media outside this approved scope",
+      "artifact_path": "",
+      "authentic_ui": false,
+      "dimensions_verified_against_current_apple_spec": false,
+      "color_profile_verified_against_current_apple_spec": false,
+      "sample_data_consistent": false,
+      "localized_copy_checked": false,
+      "claims_supported": false,
+      "paid_feature_disclosed_if_needed": false,
+      "no_other_platform_imagery": false
+    },
+    {
+      "locale": "en-US",
+      "device": "ipad",
+      "position": 1,
+      "story_role": "outcome",
+      "caption": "Tablet media outside approved scope",
+      "artifact_path": "",
+      "authentic_ui": false,
+      "dimensions_verified_against_current_apple_spec": false,
+      "color_profile_verified_against_current_apple_spec": false,
+      "sample_data_consistent": false,
+      "localized_copy_checked": false,
+      "claims_supported": false,
+      "paid_feature_disclosed_if_needed": false,
+      "no_other_platform_imagery": false
+    },
+    {
+      "locale": "es-MX",
+      "device": "iphone",
+      "position": 1,
+      "story_role": "outcome",
+      "caption": "Medios fuera del alcance aprobado",
+      "artifact_path": "",
+      "authentic_ui": false,
+      "dimensions_verified_against_current_apple_spec": false,
+      "color_profile_verified_against_current_apple_spec": false,
+      "sample_data_consistent": false,
+      "localized_copy_checked": false,
+      "claims_supported": false,
+      "paid_feature_disclosed_if_needed": false,
+      "no_other_platform_imagery": false
+    },
+    {
+      "locale": "es-MX",
+      "device": "ipad",
+      "position": 1,
+      "story_role": "outcome",
+      "caption": "Medios de iPad fuera del alcance",
+      "artifact_path": "",
+      "authentic_ui": false,
+      "dimensions_verified_against_current_apple_spec": false,
+      "color_profile_verified_against_current_apple_spec": false,
+      "sample_data_consistent": false,
+      "localized_copy_checked": false,
+      "claims_supported": false,
+      "paid_feature_disclosed_if_needed": false,
+      "no_other_platform_imagery": false
+    }
+  ],
+  "privacy": {
+    "policy_url": "https://worksbienstudios.com/apps/shrinkflation-price-scanner/en/privacy/",
+    "data_inventory_complete": true,
+    "third_party_sdks_included": true,
+    "app_privacy_answers_match_final_build": false,
+    "privacy_policy_matches_final_build": true,
+    "privacy_manifest_checked_in_final_archive": false,
+    "required_reason_apis_checked": false,
+    "sdk_signatures_checked": false,
+    "tracking_declaration_accurate": false,
+    "data_deletion_obligations_resolved": true
+  },
+  "monetization": {
+    "models": [
+      "ads",
+      "non_consumable"
+    ],
+    "products": [
+      {
+        "product_id": "com.worksbienstudios.shrinkflationpricescanner.removeads",
+        "type": "non_consumable",
+        "app_store_connect_state_verified": true,
+        "localized_metadata_complete": false,
+        "price_loaded_from_storekit": true,
+        "review_screenshot_prepared": false,
+        "visible_or_review_path_documented": true
+      }
+    ],
+    "public_fixed_price_copy_absent": true,
+    "product_ids_match_app_store_connect": true,
+    "prices_localized_from_storekit": true,
+    "purchase_locations_in_review_notes": true,
+    "paid_features_disclosed_in_metadata": true,
+    "product_review_assets_prepared": false,
+    "transaction_verification_enabled": true,
+    "storekit_error_states_tested": false,
+    "restore_purchases_available": true,
+    "ads": {
+      "behavior_and_placement_reviewed": true,
+      "privacy_disclosures_match": false,
+      "tracking_and_consent_resolved": false,
+      "production_ad_configuration_verified": false
+    }
+  },
+  "review": {
+    "notes": "# App Review notes\n\nNo account or credentials are required. Camera access is optional; choose manual entry to test without a camera. No external hardware is required.\n\nStart a shopping trip by choosing a supermarket. Scan a supported barcode or enter a product manually, then enter the current package amount and shelf price. A first saved check creates the baseline. Save a later check in the same product family to see a comparison.\n\nThe 426,044-product USDA catalogue, saved history, and comparison logic work without an internet connection. Internet is required for StoreKit product metadata and purchases, Google advertising, and the external policy and support pages.\n\nTo test an unknown barcode, enter a valid code that is not in the bundled catalogue and link it to any existing saved product family. History supports search, filters, edited decisions, deletion, and an eight-second undo. The Impact tab excludes zero-value chart points.\n\nBanner removal is in Settings under Banner. Remove Banner is a non-consumable purchase with product ID `com.worksbienstudios.shrinkflationpricescanner.removeads`. Restore Purchase is in the same section. Core scanning, comparison, history, and impact features do not require the purchase.\n\nThe prepared TestFlight configuration uses Google's official sample ad identifiers. Sample-ad mode intentionally bypasses UMP and should show only sample ads. Invalid, unavailable, or offline ad states fall back to the WorksBien house banner. A production App Store build must use verified production advertising identifiers and matching UMP, ATT, privacy-manifest, and App Privacy configuration.\n\nAvailability is limited to the United States and Puerto Rico. The app interface supports English and Puerto Rico-aware Spanish. App Store Connect's Spanish Mexico locale is used only as the available Spanish metadata container.\n\n",
+    "contact_complete": false,
+    "demo_access_complete": true,
+    "navigation_path_documented": true,
+    "non_obvious_features_explained": true,
+    "permission_steps_explained": true,
+    "iap_locations_explained": true
+  },
+  "guideline_review": {
+    "source_url": "https://developer.apple.com/app-store/review/guidelines/",
+    "reviewed_on": "2026-09-16",
+    "all_current_ids_included": true,
+    "required_ids": [
+      "1.1",
+      "1.1.1",
+      "1.1.2",
+      "1.1.3",
+      "1.1.4",
+      "1.1.5",
+      "1.1.6",
+      "1.1.7",
+      "1.2",
+      "1.2.1",
+      "1.3",
+      "1.4",
+      "1.4.1",
+      "1.4.2",
+      "1.4.3",
+      "1.4.4",
+      "1.4.5",
+      "1.5",
+      "1.6",
+      "1.7",
+      "2.1",
+      "2.2",
+      "2.3",
+      "2.3.1",
+      "2.3.2",
+      "2.3.3",
+      "2.3.4",
+      "2.3.5",
+      "2.3.6",
+      "2.3.7",
+      "2.3.8",
+      "2.3.9",
+      "2.3.10",
+      "2.3.11",
+      "2.3.12",
+      "2.3.13",
+      "2.4",
+      "2.4.1",
+      "2.4.2",
+      "2.4.3",
+      "2.4.4",
+      "2.4.5",
+      "2.5",
+      "2.5.1",
+      "2.5.2",
+      "2.5.3",
+      "2.5.4",
+      "2.5.5",
+      "2.5.6",
+      "2.5.7",
+      "2.5.8",
+      "2.5.9",
+      "2.5.10",
+      "2.5.11",
+      "2.5.12",
+      "2.5.13",
+      "2.5.14",
+      "2.5.15",
+      "2.5.16",
+      "2.5.17",
+      "2.5.18",
+      "3.1",
+      "3.1.1",
+      "3.1.2",
+      "3.1.3",
+      "3.1.4",
+      "3.1.5",
+      "3.2",
+      "3.2.1",
+      "3.2.2",
+      "4.1",
+      "4.2",
+      "4.2.1",
+      "4.2.2",
+      "4.2.3",
+      "4.2.4",
+      "4.2.5",
+      "4.2.6",
+      "4.2.7",
+      "4.3",
+      "4.4",
+      "4.4.1",
+      "4.4.2",
+      "4.4.3",
+      "4.5",
+      "4.5.1",
+      "4.5.2",
+      "4.5.3",
+      "4.5.4",
+      "4.5.5",
+      "4.5.6",
+      "4.6",
+      "4.7",
+      "4.7.1",
+      "4.7.2",
+      "4.7.3",
+      "4.7.4",
+      "4.7.5",
+      "4.8",
+      "4.9",
+      "4.10",
+      "5.1",
+      "5.1.1",
+      "5.1.2",
+      "5.1.3",
+      "5.1.4",
+      "5.1.5",
+      "5.2",
+      "5.2.1",
+      "5.2.2",
+      "5.2.3",
+      "5.2.4",
+      "5.2.5",
+      "5.3",
+      "5.3.1",
+      "5.3.2",
+      "5.3.3",
+      "5.3.4",
+      "5.4",
+      "5.5",
+      "5.6",
+      "5.6.1",
+      "5.6.2",
+      "5.6.3",
+      "5.6.4"
+    ],
+    "dispositions": [
+      {
+        "id": "1.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.1.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.1.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.1.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.1.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.1.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.1.6",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.1.7",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.2.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.4.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.4.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.4.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.4.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.4.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "1.5",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "1.6",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "1.7",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.1",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "2.2",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.3",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "2.3.1",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.3.2",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.3.3",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "2.3.4",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "2.3.5",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.3.6",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "2.3.7",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.3.8",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "2.3.9",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "2.3.10",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.3.11",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.3.12",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.3.13",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.4",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.4.1",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.4.2",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.4.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.4.4",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.4.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "2.5.1",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.5.2",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.5.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.6",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.7",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.8",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.9",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.10",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.11",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.12",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.13",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.14",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "2.5.15",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.16",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.17",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "2.5.18",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "3.1",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "3.1.1",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "3.1.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "3.1.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "3.1.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "3.1.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "3.2",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "3.2.1",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "3.2.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.1",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "4.2",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "4.2.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.2.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.2.3",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "4.2.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.2.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.2.6",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.2.7",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.4.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.4.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.4.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.5.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.5.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.5.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.5.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.5.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.5.6",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.6",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "4.7",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.7.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.7.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.7.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.7.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.7.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.8",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.9",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "4.10",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.1",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "5.1.1",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "5.1.2",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "5.1.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.1.4",
+        "status": "blocked",
+        "evidence": "Requires the signed production archive, live metadata or media, production ad/privacy parity, or owner contact evidence listed in AppStoreConnect/README.md."
+      },
+      {
+        "id": "5.1.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.2",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "5.2.1",
+        "status": "pass",
+        "evidence": "Inspected source and the non-media release pack provide the applicable behavior or disclosure for this shopping utility."
+      },
+      {
+        "id": "5.2.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.2.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.2.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.2.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.3.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.3.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.3.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.3.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.5",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.6",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.6.1",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.6.2",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.6.3",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      },
+      {
+        "id": "5.6.4",
+        "status": "n_a",
+        "evidence": "The inspected app has no feature, content, account, hardware, subscription, user-generated content, regulated service, or platform behavior activating this subsection."
+      }
+    ]
+  },
+  "compliance_controls": {
+    "app_stability": {
+      "status": "blocked",
+      "evidence": "Requires final signed build and on-device test matrix."
+    },
+    "metadata_build_parity": {
+      "status": "blocked",
+      "evidence": "Production ad configuration and final archive are not yet reconciled."
+    },
+    "metadata_complete_accurate": {
+      "status": "pass",
+      "evidence": "Non-media metadata is finalized in AppStoreConnect/ and checked against source."
+    },
+    "screenshots_authentic_current": {
+      "status": "blocked",
+      "evidence": "Media was explicitly outside this run."
+    },
+    "reviewer_access": {
+      "status": "pass",
+      "evidence": "No account or hardware is required; exact navigation is in review-notes.md."
+    },
+    "legal_urls_live": {
+      "status": "blocked",
+      "evidence": "Final policy deployment and response check must complete."
+    },
+    "privacy_policy_matches_build": {
+      "status": "pass",
+      "evidence": "Policies/ is grounded in the inspected source and SDK inventory."
+    },
+    "app_privacy_answers_match_build_and_sdks": {
+      "status": "blocked",
+      "evidence": "App Privacy answers require signed-archive SDK reconciliation."
+    },
+    "privacy_manifest_archive_checked": {
+      "status": "blocked",
+      "evidence": "No signed production archive exists."
+    },
+    "required_reason_apis_and_sdk_signatures_checked": {
+      "status": "blocked",
+      "evidence": "Requires signed-archive inspection."
+    },
+    "permissions_just_in_time": {
+      "status": "pass",
+      "evidence": "Camera permission is requested from the scanner; manual entry remains available."
+    },
+    "age_rating_accurate": {
+      "status": "blocked",
+      "evidence": "Current App Store Connect age-rating answers require owner confirmation."
+    },
+    "content_rights_confirmed": {
+      "status": "pass",
+      "evidence": "Catalogue provenance and USDA source are preserved; product marks remain with owners."
+    },
+    "export_compliance_resolved": {
+      "status": "pass",
+      "evidence": "ITSAppUsesNonExemptEncryption is false in Config/Info.plist."
+    },
+    "no_private_apis_hidden_features_placeholders": {
+      "status": "pass",
+      "evidence": "Static source review found documented Apple frameworks and no hidden feature switch."
+    },
+    "accessibility_device_locale_rtl_checked": {
+      "status": "blocked",
+      "evidence": "Source includes VoiceOver and dynamic type work, but final device matrix is not complete."
+    },
+    "regional_availability_reviewed": {
+      "status": "pass",
+      "evidence": "App Store Connect shows 2 of 175 regions selected for the IAP; US/PR scope is locked in the release pack."
+    },
+    "contact_information_current": {
+      "status": "blocked",
+      "evidence": "App Review contact name, phone, email and TestFlight feedback email are owner-supplied."
+    },
+    "guideline_sweep_complete": {
+      "status": "pass",
+      "evidence": "All 125 live guideline identifiers captured on 2026-09-16 have dispositions."
+    }
+  },
+  "aso_controls": {
+    "search_intent_researched": {
+      "status": "pass",
+      "evidence": "Primary job and natural English/PR Spanish vocabulary are recorded."
+    },
+    "primary_intent_in_name_when_natural": {
+      "status": "pass",
+      "evidence": "Both localized names identify shrinkflation scanning within 30 characters."
+    },
+    "secondary_value_in_subtitle": {
+      "status": "pass",
+      "evidence": "Both subtitles state package and value comparison within 30 characters."
+    },
+    "keyword_field_relevant_deduplicated": {
+      "status": "pass",
+      "evidence": "Keyword sets map only to source-supported shopping behavior and fit the UTF-8 limit."
+    },
+    "competitor_trademark_screened": {
+      "status": "pass",
+      "evidence": "No competitor or retailer terms are used."
+    },
+    "category_fit_confirmed": {
+      "status": "pass",
+      "evidence": "Shopping is the primary function; Utilities is secondary."
+    },
+    "first_sentence_differentiator": {
+      "status": "pass",
+      "evidence": "Each locale leads with the shopper's evidence-based value decision."
+    },
+    "three_frame_visual_story": {
+      "status": "blocked",
+      "evidence": "Media was explicitly outside this run."
+    },
+    "native_locale_adaptation": {
+      "status": "pass",
+      "evidence": "A separate fully bilingual expert approved US English and Puerto Rico Spanish."
+    },
+    "search_to_product_page_alignment": {
+      "status": "pass",
+      "evidence": "Name, subtitle and description consistently promise package and unit-value comparison."
+    },
+    "claims_supported": {
+      "status": "pass",
+      "evidence": "All quantitative and behavioral claims map to source, catalogue metadata or App Store Connect."
+    },
+    "baseline_metrics_recorded": {
+      "status": "blocked",
+      "evidence": "No live product-page baseline exists before launch."
+    },
+    "one_variable_experiment_defined": {
+      "status": "pass",
+      "evidence": "Subtitle-value framing is the first post-launch experiment; conversion is the primary metric."
+    },
+    "review_feedback_loop_defined": {
+      "status": "pass",
+      "evidence": "Review, support, conversion, refund and search-term evidence feed the next metadata revision."
+    }
+  },
+  "authorization": {
+    "live_submission_authorized": false,
+    "authorization_evidence": "The user requested preparation and explicitly said TestFlight must not be wired yet."
+  }
+}
