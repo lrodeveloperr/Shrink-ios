@@ -30,8 +30,7 @@ jobs:
           set -euo pipefail
           work="$(mktemp -d)"
           unzip -q /tmp/Shrink-iOS-current-c1dd3f2.zip -d "$work"
-          test "$(git -C "$work/Shrink-ios" rev-parse HEAD 2>/dev/null || true)" = "" || true
-          rsync -a --delete --exclude='.git/' "$work/Shrink-ios/" ./
+          rsync -a --delete --exclude='.git/' --exclude='.github/workflows/' "$work/Shrink-ios/" ./
           echo "255468433a3b986e2d5e7c85dd02f029cae83401128a8496280459fb39f21cee  App/Resources/catalogue.sqlite3" | sha256sum -c -
 
       - name: Track catalogue with Git LFS
