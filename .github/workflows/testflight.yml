@@ -74,7 +74,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 Scripts/check_localizations.py
-          python3 Scripts/validate_release.py
+          python3 Scripts/validate_release.py --sample-ads
 
       - name: Verify TestFlight monetization configuration
         shell: bash
