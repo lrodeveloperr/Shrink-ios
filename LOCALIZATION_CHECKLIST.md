@@ -4,7 +4,7 @@ Locales: English (`en`) and Puerto Rico-aware Latin American Spanish (`es-419`).
 
 ## Automated code-only checks
 
-- [ ] Exactly 187 strings and one plural key exist in each locale.
+- [ ] Exactly 198 strings and one plural key exist in each locale.
 - [ ] English and Spanish keys, format placeholders, and plural forms match.
 - [ ] No unsupported locale, country selector, or alternate currency resource remains.
 - [ ] Localized VoiceOver labels cover scan, torch, retry, manual entry, history deletion, undo, and purchase actions.

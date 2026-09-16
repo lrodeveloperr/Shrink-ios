@@ -86,8 +86,8 @@ def main() -> int:
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    if len(base_keys) != 187:
-        errors.append(f"Expected exactly 187 string keys, found {len(base_keys)}")
+    if len(base_keys) != 198:
+        errors.append(f"Expected exactly 198 string keys, found {len(base_keys)}")
 
     if errors:
         print("\n".join(errors), file=sys.stderr)

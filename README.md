@@ -22,7 +22,7 @@ Native SwiftUI utility for detecting package-size and unit-price changes without
 2. Choose the `ShrinkflationPriceScanner` scheme and a signing team.
 3. Use a physical iPhone or iPad for camera scanning.
 
-The project uses Swift Package Manager for Google Mobile Ads and Google User Messaging Platform. Google's official sample identifiers are retained for pre-release validation. Sample-ad mode bypasses UMP entirely; invalid advertising configuration fails safely to the WorksBien house banner. Replace sample identifiers only for an approved production App Store archive.
+The project uses Swift Package Manager for Google Mobile Ads and Google User Messaging Platform. Google's official sample identifiers are retained for pre-release validation. Sample-ad mode bypasses UMP entirely. If Google cannot provide an ad, the banner area closes without showing a replacement house banner. Replace sample identifiers only for an approved production App Store archive.
 
 ## Policies and App Store materials
 

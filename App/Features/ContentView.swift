@@ -6,6 +6,7 @@ private enum RootTab: Hashable { case scan, history, impact }
 
 struct ContentView: View {
     @EnvironmentObject private var environment: AppEnvironment
+    @AppStorage(AppLocalization.preferenceKey) private var languagePreference = AppLanguagePreference.system.rawValue
     @State private var tab: RootTab = .scan
 
     var body: some View {
@@ -21,11 +22,11 @@ struct ContentView: View {
                     .tabItem { Label(AppLocalization.text("tab.impact"), systemImage: "chart.bar.xaxis") }
                     .tag(RootTab.impact)
             }
-            if !environment.purchaseManager.hasRemovedAds {
-                Color.clear.frame(height: 8)
-                PersistentAdStrip(purchaseManager: environment.purchaseManager, adManager: environment.adManager)
+            if !environment.purchaseManager.hasRemovedAds && environment.adManager.canRequestAds {
+                PersistentAdStrip(adManager: environment.adManager)
             }
         }
+        .environment(\.locale, selectedLocale)
         .alert(AppLocalization.text("Something went wrong"), isPresented: Binding(
             get: { environment.errorMessage != nil },
             set: { if !$0 { environment.errorMessage = nil } }
@@ -34,6 +35,11 @@ struct ContentView: View {
         } message: {
             Text(environment.errorMessage ?? AppLocalization.text("error.try_again"))
         }
+    }
+
+    private var selectedLocale: Locale {
+        _ = languagePreference
+        return AppLocalization.locale
     }
 }
 
@@ -186,7 +192,7 @@ private struct ScanHomeView: View {
                         .font(.headline)
                         .lineLimit(1)
                     if let date = environment.activeTrip?.startedAt {
-                        Text(date, format: .dateTime.weekday(.wide).month(.abbreviated).day())
+                        Text(date, format: .dateTime.locale(AppLocalization.locale).weekday(.wide).month(.abbreviated).day())
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -272,7 +278,7 @@ private struct ScanHomeView: View {
                     }
                     VStack(alignment: .leading, spacing: 3) {
                         Text(trip.store.name).font(.title3.weight(.bold)).lineLimit(1)
-                        Text(trip.startedAt, format: .dateTime.weekday(.wide).month(.abbreviated).day())
+                        Text(trip.startedAt, format: .dateTime.locale(AppLocalization.locale).weekday(.wide).month(.abbreviated).day())
                             .font(.subheadline).foregroundStyle(.secondary)
                     }
                     Spacer()
@@ -514,7 +520,7 @@ private struct ProductEntryView: View {
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text(AppLocalization.text("entry.current_quantity"))
                                         .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                                    TextField(AppLocalization.text("entry.current_quantity"), value: $draft.quantityValue, format: .number.precision(.fractionLength(0...3)))
+                                    TextField(AppLocalization.text("entry.current_quantity"), value: $draft.quantityValue, format: .number.locale(AppLocalization.locale).precision(.fractionLength(0...3)))
                                         .keyboardType(.decimalPad).textFieldStyle(.roundedBorder)
                                     if draft.quantityValue <= 0 { validationText("entry.quantity_required") }
                                 }
@@ -592,7 +598,7 @@ private struct ProductEntryView: View {
             .navigationTitle(draft.isKnownProduct ? AppLocalization.text("Found") : AppLocalization.text("entry.product_not_found"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button(AppLocalization.text("Cancel")) { dismiss() } } }
-            .sheet(isPresented: $showsPricePad) { MoneyKeypad(value: $draft.price, currency: draft.currency) }
+            .sheet(isPresented: $showsPricePad) { MoneyKeypad(value: $draft.price) }
             .sheet(isPresented: $showsFamilyLinker) {
                 FamilyLinkerView(products: environment.recentProducts, excluding: draft.familyID) { product in
                     environment.link(&draft, to: product)
@@ -661,48 +667,68 @@ private struct FamilyLinkerView: View {
 private struct MoneyKeypad: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var value: Decimal?
-    let currency: CurrencyCode
-    @State private var digits = ""
+    @State private var input = MoneyKeypadInput()
 
-    private var cents: Int { Int(digits) ?? 0 }
-    private var display: String { MoneyFormatter.string(Decimal(cents) / 100) }
+    private var display: String { MoneyFormatter.string(input.value) }
     private let rows = [["1","2","3"],["4","5","6"],["7","8","9"],[".00","0","⌫"]]
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
-                Text(display).font(.system(size: 44, weight: .bold, design: .rounded)).contentTransition(.numericText())
-                    .frame(maxWidth: .infinity).padding(.vertical, 16)
+            VStack(spacing: 14) {
+                VStack(spacing: 5) {
+                    Text(AppLocalization.text("entry.shelf_price"))
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                    Text(display)
+                        .font(.system(size: 46, weight: .bold, design: .rounded))
+                        .foregroundStyle(.blue)
+                        .contentTransition(.numericText())
+                        .minimumScaleFactor(0.7)
+                }
+                .frame(maxWidth: .infinity, minHeight: 94)
+                .background(Color.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
                 ForEach(rows, id: \.self) { row in
                     HStack(spacing: 12) {
                         ForEach(row, id: \.self) { key in
-                            Button { tap(key) } label: { Text(key).font(.title2.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 54) }
-                                .buttonStyle(.bordered)
+                            Button { tap(key) } label: {
+                                Group {
+                                    if key == "⌫" {
+                                        Image(systemName: "delete.backward")
+                                    } else {
+                                        Text(key)
+                                    }
+                                }
+                                .font(.title2.weight(.semibold))
+                                .frame(maxWidth: .infinity, minHeight: 52)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 17, style: .continuous))
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(key == ".00" ? Color.blue : Color.primary)
+                            .accessibilityLabel(key == "⌫" ? AppLocalization.text("entry.backspace") : key)
                         }
                     }
                 }
                 HStack(spacing: 12) {
-                    Button(AppLocalization.text("entry.clear")) { digits = "" }.buttonStyle(.bordered).frame(maxWidth: .infinity)
-                    Button(".99") { applyCents("99") }.buttonStyle(.bordered).frame(maxWidth: .infinity)
-                    Button(AppLocalization.text("Done")) { value = Decimal(cents) / 100; dismiss() }.buttonStyle(.borderedProminent).frame(maxWidth: .infinity)
+                    Button(AppLocalization.text("entry.clear")) { input.clear() }
+                        .buttonStyle(.bordered).frame(maxWidth: .infinity)
+                    Button(".99") { input.applyCents(99) }
+                        .buttonStyle(.borderedProminent).tint(.blue.opacity(0.16)).foregroundStyle(.blue).frame(maxWidth: .infinity)
+                    Button(AppLocalization.text("Done")) { value = input.value; dismiss() }
+                        .buttonStyle(.borderedProminent).frame(maxWidth: .infinity)
                 }.controlSize(.large)
             }
-            .padding(20)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 14)
+            .background(Color(uiColor: .systemGroupedBackground))
             .navigationTitle(AppLocalization.text("Price each"))
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                if let value { digits = String(NSDecimalNumber(decimal: value * 100).intValue) }
-            }
+            .onAppear { input = MoneyKeypadInput(value: value) }
         }
         .presentationDetents([.height(540)])
     }
     private func tap(_ key: String) {
-        if key == "⌫" { if !digits.isEmpty { digits.removeLast() } }
-        else if key == ".00" { applyCents("00") }
-        else if digits.count < 9 { digits.append(key) }
-    }
-    private func applyCents(_ suffix: String) {
-        let whole = cents / 100
-        digits = String(whole * 100 + (Int(suffix) ?? 0))
+        if key == "⌫" { input.backspace() }
+        else if key == ".00" { input.applyCents(0) }
+        else if let digit = key.first { input.appendDigit(digit) }
     }
 }
 
@@ -723,12 +749,12 @@ struct ComparisonRow: View {
                 .padding(.horizontal, 8).padding(.vertical, 5).background(statusColor.opacity(0.1), in: Capsule())
             Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
         }
-        .padding(.horizontal, 12).padding(.vertical, 11).contentShape(Rectangle())
+        .padding(.vertical, 11).contentShape(Rectangle())
     }
     private var metadata: String { "\(result.current.packageDescription) · \(result.current.store)" }
     private var shortStatus: String {
         if let change = result.sizeChange, result.status == .shrinkflation || result.status == .packageChange {
-            return abs(change).formatted(.percent.precision(.fractionLength(0...1))) + " " + AppLocalization.text("history.less")
+            return abs(change).formatted(.percent.locale(AppLocalization.locale).precision(.fractionLength(0...1))) + " " + AppLocalization.text("history.less")
         }
         return result.status.title
     }
@@ -800,7 +826,7 @@ struct ComparisonDetailView: View {
                             if let previous = result.previous { evidenceRow(AppLocalization.text("result.previous"), previous.packageDescription, previous.formattedPrice) }
                             Divider()
                             Label(result.current.store, systemImage: "basket")
-                            Label(result.current.observedAt.formatted(date: .abbreviated, time: .omitted), systemImage: "calendar")
+                            Label(result.current.observedAt.formatted(.dateTime.locale(AppLocalization.locale).month(.abbreviated).day().year()), systemImage: "calendar")
                         }.padding(.top, 12)
                     } label: { Text(AppLocalization.text("result.see_evidence")).font(.headline) }
                     .padding(18).background(.background, in: RoundedRectangle(cornerRadius: 18))
@@ -829,8 +855,8 @@ struct ComparisonDetailView: View {
     private func evidenceRow(_ title: String, _ amount: String, _ price: String?) -> some View {
         HStack { Text(title).foregroundStyle(.secondary); Spacer(); Text([amount, price].compactMap { $0 }.joined(separator: " · ")).fontWeight(.semibold) }
     }
-    private func sizeText(_ value: Double) -> String { value < 0 ? AppLocalization.text("result.less", abs(value).formatted(.percent.precision(.fractionLength(0...1)))) : AppLocalization.text("result.more", value.formatted(.percent.precision(.fractionLength(0...1)))) }
-    private func unitPriceText(_ value: Double) -> String { value >= 0 ? AppLocalization.text("result.unit_more", value.formatted(.percent.precision(.fractionLength(0...1)))) : AppLocalization.text("result.unit_less", abs(value).formatted(.percent.precision(.fractionLength(0...1)))) }
+    private func sizeText(_ value: Double) -> String { value < 0 ? AppLocalization.text("result.less", abs(value).formatted(.percent.locale(AppLocalization.locale).precision(.fractionLength(0...1)))) : AppLocalization.text("result.more", value.formatted(.percent.locale(AppLocalization.locale).precision(.fractionLength(0...1)))) }
+    private func unitPriceText(_ value: Double) -> String { value >= 0 ? AppLocalization.text("result.unit_more", value.formatted(.percent.locale(AppLocalization.locale).precision(.fractionLength(0...1)))) : AppLocalization.text("result.unit_less", abs(value).formatted(.percent.locale(AppLocalization.locale).precision(.fractionLength(0...1)))) }
     private var heroIcon: String { result.status == .betterValue || result.status == .unchanged ? "checkmark.circle.fill" : result.status == .baseline ? "clock.badge.checkmark" : "exclamationmark.triangle.fill" }
     private var heroColor: Color { result.status == .betterValue ? .blue : result.status == .unchanged ? .green : result.status == .baseline ? .orange : .red }
 }
@@ -853,6 +879,7 @@ struct HistoryView: View {
             Button { showingFilters = true } label: {
                 HStack { Image(systemName: "line.3.horizontal.decrease.circle"); Text(AppLocalization.text("history.filters")); Spacer(); Text(filterSummary).foregroundStyle(.secondary) }
             }
+            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             if filtered.isEmpty {
                 ContentUnavailableView(AppLocalization.text("No scans yet"), systemImage: "clock", description: Text(AppLocalization.text("Your saved comparisons will appear here.")))
                     .listRowBackground(Color.clear)
@@ -860,6 +887,7 @@ struct HistoryView: View {
                 ForEach(filtered) { row in
                     Button { selected = row } label: { ComparisonRow(result: row) }
                         .buttonStyle(.plain)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                         .swipeActions {
                             Button(AppLocalization.text("Delete"), role: .destructive) { delete(row) }
                         }
@@ -970,7 +998,7 @@ struct ImpactView: View {
                         }
                     }
                 }
-                HStack(spacing: 12) {
+                HStack(alignment: .top, spacing: 12) {
                     metric(title: AppLocalization.text("impact.caught"), value: "\(summary.productsCaught)", icon: "exclamationmark.triangle", color: .red)
                     metric(title: AppLocalization.text("impact.unscored"), value: "\(summary.unscoredEvidence)", icon: "doc.text.magnifyingglass", color: .orange)
                 }
@@ -1023,13 +1051,16 @@ struct ImpactView: View {
     }
     private func metric(title: String, value: String, icon: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 8) { Image(systemName: icon).foregroundStyle(color); Text(value).font(.title2.weight(.bold)); Text(title).font(.caption).foregroundStyle(.secondary) }
-            .frame(maxWidth: .infinity, alignment: .leading).padding(16).background(.background, in: RoundedRectangle(cornerRadius: 18))
+            .frame(maxWidth: .infinity, minHeight: 108, alignment: .topLeading)
+            .padding(16)
+            .background(.background, in: RoundedRectangle(cornerRadius: 18))
     }
 }
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var environment: AppEnvironment
+    @AppStorage(AppLocalization.preferenceKey) private var languagePreference = AppLanguagePreference.system.rawValue
     @State private var showingDelete = false
     @State private var showingPurchase = false
     var body: some View {
@@ -1043,8 +1074,21 @@ struct SettingsView: View {
             Section(AppLocalization.text("Offline data")) {
                 Button(AppLocalization.text("Delete all local data"), role: .destructive) { showingDelete = true }
             }
+            Section(AppLocalization.text("settings.language")) {
+                Picker(AppLocalization.text("settings.language"), selection: $languagePreference) {
+                    ForEach(AppLanguagePreference.allCases) { language in
+                        Text(language.title).tag(language.rawValue)
+                    }
+                }
+                .pickerStyle(.navigationLink)
+            }
             Section(AppLocalization.text("settings.help")) {
-                NavigationLink(AppLocalization.text("settings.how_it_works")) { PolicyTextView(title: AppLocalization.text("settings.how_it_works"), text: AppLocalization.text("policy.how_it_works")) }
+                NavigationLink {
+                    ComparisonGuideView()
+                } label: {
+                    Text(AppLocalization.text("settings.how_it_works"))
+                        .foregroundStyle(.blue)
+                }
                 Link(AppLocalization.text("Support"), destination: AppLinks.support)
             }
             Section(AppLocalization.text("settings.legal")) {
@@ -1095,9 +1139,36 @@ private struct ExternalPolicyLabel: View {
     }
 }
 
-private struct PolicyTextView: View {
-    let title: String; let text: String
-    var body: some View { ScrollView { Text(text).frame(maxWidth: 680, alignment: .leading).padding(20) }.navigationTitle(title).navigationBarTitleDisplayMode(.inline) }
+private struct ComparisonGuideView: View {
+    private let stepKeys = ["guide.step.1", "guide.step.2", "guide.step.3", "guide.step.4", "guide.step.5"]
+
+    var body: some View {
+        List {
+            Section(AppLocalization.text("guide.intro")) {
+                ForEach(Array(stepKeys.enumerated()), id: \.offset) { index, key in
+                    HStack(alignment: .top, spacing: 14) {
+                        Text("\(index + 1)")
+                            .font(.subheadline.weight(.bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 28, height: 28)
+                            .background(.blue, in: Circle())
+                            .accessibilityHidden(true)
+                        Text(AppLocalization.text(key))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.vertical, 4)
+                    .accessibilityElement(children: .combine)
+                }
+            }
+            Section {
+                Label(AppLocalization.text("policy.how_it_works"), systemImage: "checkmark.shield")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .navigationTitle(AppLocalization.text("settings.how_it_works"))
+        .navigationBarTitleDisplayMode(.inline)
+    }
 }
 
 struct RemoveBannerView: View {

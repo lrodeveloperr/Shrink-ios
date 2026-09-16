@@ -103,7 +103,7 @@ enum QuantityUnit: String, CaseIterable, Identifiable, Codable, Hashable, Sendab
 enum PackageFormatter {
     static func description(value: Double, unit: QuantityUnit, packCount: Int) -> String {
         guard value > 0 else { return AppLocalization.text("status.details_needed") }
-        let amount = value.formatted(.number.precision(.fractionLength(0...2)))
+        let amount = value.formatted(.number.locale(AppLocalization.locale).precision(.fractionLength(0...2)))
         return packCount > 1 ? "\(packCount) × \(amount) \(unit.localizedSymbol)" : "\(amount) \(unit.localizedSymbol)"
     }
 }
@@ -118,12 +118,44 @@ enum MoneyFormatter {
     static func string(_ value: Decimal) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.locale = Locale.current
+        formatter.locale = AppLocalization.locale
         formatter.currencyCode = "USD"
         formatter.currencySymbol = "$"
         formatter.minimumFractionDigits = 2
         formatter.maximumFractionDigits = 2
         return formatter.string(from: value as NSDecimalNumber) ?? "$0.00"
+    }
+}
+
+struct MoneyKeypadInput: Equatable {
+    private(set) var digits = ""
+
+    init(value: Decimal? = nil) {
+        guard let value, value > 0 else { return }
+        digits = String(NSDecimalNumber(decimal: value * 100).intValue)
+    }
+
+    var cents: Int { Int(digits) ?? 0 }
+    var value: Decimal { Decimal(cents) / 100 }
+
+    mutating func appendDigit(_ digit: Character) {
+        guard digit.isNumber, digits.count < 9 else { return }
+        digits.append(digit)
+    }
+
+    mutating func backspace() {
+        guard !digits.isEmpty else { return }
+        digits.removeLast()
+    }
+
+    mutating func clear() { digits = "" }
+
+    mutating func applyCents(_ suffix: Int) {
+        guard (0...99).contains(suffix) else { return }
+        // A short entry is the shopper's whole-dollar amount when a cents
+        // shortcut is tapped: 2 + .99 means $2.99, not $0.99.
+        let wholeDollars = cents < 100 ? cents : cents / 100
+        digits = String(wholeDollars * 100 + suffix)
     }
 }
 

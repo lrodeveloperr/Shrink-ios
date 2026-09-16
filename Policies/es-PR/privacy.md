@@ -28,7 +28,7 @@ La versión gratuita tiene un espacio reservado para un banner. En una configura
 
 Google indica que su SDK de anuncios móviles puede procesar datos como la dirección IP, ubicación general inferida de la IP, identificadores del dispositivo o de publicidad, registros de fallas, datos de rendimiento, información de anuncios, interacciones con la app, señales de consentimiento y diagnósticos. Puede usarlos para mostrar y medir anuncios, análisis, prevención de fraude, seguridad y fines relacionados. El procesamiento exacto depende del SDK publicado, la configuración, la región y tus decisiones. Google maneja esos datos bajo sus propias políticas.
 
-Las versiones de TestFlight y desarrollo usan identificadores de anuncios de muestra de Google y omiten intencionalmente User Messaging Platform. Si no hay conexión, no hay un anuncio disponible o la configuración no es válida, la app muestra el banner propio de WorksBien.
+Las versiones de TestFlight y desarrollo usan identificadores de anuncios de muestra de Google y omiten intencionalmente User Messaging Platform. Si no hay conexión, no hay un anuncio disponible o la configuración no es válida, la app no muestra un banner propio como reemplazo.
 
 Cuando Google requiere un acceso a sus opciones de privacidad dentro de la app, aparece en Configuración. También puedes cambiar el permiso de rastreo de iOS desde la app Configuración del dispositivo.
 
@@ -63,4 +63,3 @@ Shrinkflation Price Scanner es una herramienta general para compras y no está d
 WorksBien puede actualizar esta política cuando cambien la app, los proveedores o las obligaciones legales. La fecha de vigencia y los cambios importantes se actualizarán en la página pública.
 
 WorksBien Studios Inc. es responsable de esta política. Para preguntas o solicitudes de privacidad, usa la página de servicio al cliente en `https://worksbienstudios.com/customerservice`.
-

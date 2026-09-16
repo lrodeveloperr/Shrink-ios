@@ -10,7 +10,6 @@ To test an unknown barcode, enter a valid code that is not in the bundled catalo
 
 Banner removal is in Settings under Banner. Remove Banner is a non-consumable purchase with product ID `com.worksbienstudios.shrinkflationpricescanner.removeads`. Restore Purchase is in the same section. Core scanning, comparison, history, and impact features do not require the purchase.
 
-The prepared TestFlight configuration uses Google's official sample ad identifiers. Sample-ad mode intentionally bypasses UMP and should show only sample ads. Invalid, unavailable, or offline ad states fall back to the WorksBien house banner. A production App Store build must use verified production advertising identifiers and matching UMP, ATT, privacy-manifest, and App Privacy configuration.
+The prepared TestFlight configuration uses Google's official sample ad identifiers. Sample-ad mode intentionally bypasses UMP and should show only sample ads. Invalid, unavailable, or offline ad states show no replacement banner. A production App Store build must use verified production advertising identifiers and matching UMP, ATT, privacy-manifest, and App Privacy configuration.
 
 Availability is limited to the United States and Puerto Rico. The app interface supports English and Puerto Rico-aware Spanish. App Store Connect's Spanish Mexico locale is used only as the available Spanish metadata container.
-

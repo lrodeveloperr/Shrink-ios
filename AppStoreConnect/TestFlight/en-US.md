@@ -8,7 +8,7 @@ Shrinkflation Price Scanner helps shoppers in the United States and Puerto Rico 
 
 ## What to test
 
-Verify US/PR supermarket ordering from the device region; barcode scanning and manual entry; UPC-E and 8-digit format selection; unknown-barcode linking; package and price validation; first-check baseline and later comparison; History search, filters, edit, delete, and eight-second undo; Impact math and chart scaling; airplane-mode catalogue and history behavior; sample-ad fallback; banner purchase and restore in the StoreKit sandbox; privacy, terms, and support links; VoiceOver, Larger Text, dark mode, portrait, and landscape.
+Verify US/PR supermarket ordering from the device region; barcode scanning and manual entry; UPC-E and 8-digit format selection; unknown-barcode linking; package and price validation; first-check baseline and later comparison; History search, filters, edit, delete, and eight-second undo; Impact math and chart scaling; airplane-mode catalogue and history behavior; Google sample-ad loading and clean failure with no replacement banner; banner purchase and restore in the StoreKit sandbox; privacy, terms, and support links; VoiceOver, Larger Text, dark mode, portrait, and landscape.
 
 ## Beta App Review notes
 
@@ -19,4 +19,3 @@ No account or credentials are required. Camera access is optional; choose manual
 - TestFlight feedback email
 - App Review contact name, phone, and email
 - Tester groups and invitation policy
-

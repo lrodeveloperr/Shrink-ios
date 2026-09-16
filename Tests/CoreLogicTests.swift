@@ -69,6 +69,28 @@ final class CoreLogicTests: XCTestCase {
         XCTAssertEqual(ShelfPriceScannerView.extractPrice(from: "US$ 12,49"), Decimal(string: "12.49"))
     }
 
+    func testMoneyKeypadNinetyNineCentShortcutKeepsEnteredDollars() {
+        var input = MoneyKeypadInput()
+        input.appendDigit("2")
+        input.applyCents(99)
+        XCTAssertEqual(input.value, Decimal(string: "2.99")!)
+    }
+
+    func testMoneyKeypadZeroCentShortcutKeepsEnteredDollars() {
+        var input = MoneyKeypadInput()
+        input.appendDigit("2")
+        input.applyCents(0)
+        XCTAssertEqual(input.value, Decimal(string: "2.00")!)
+    }
+
+    func testMoneyKeypadNormalDigitEntryStillUsesCents() {
+        var input = MoneyKeypadInput()
+        input.appendDigit("2")
+        input.appendDigit("9")
+        input.appendDigit("9")
+        XCTAssertEqual(input.value, Decimal(string: "2.99")!)
+    }
+
     private func observation(
         quantity: Double,
         unit: QuantityUnit = .gram,

@@ -196,47 +196,42 @@ final class AdManager: ObservableObject {
 }
 
 struct PersistentAdStrip: View {
-    @ObservedObject var purchaseManager: PurchaseManager
     @ObservedObject var adManager: AdManager
-    @State private var adLoaded = false
-    @State private var showingPurchase = false
+    @State private var loadState: BannerLoadState = .loading
     @State private var reservedHeight: CGFloat = 64
 
     var body: some View {
-        ZStack {
-            Color.clear.frame(height: reservedHeight)
-            if !adLoaded || !adManager.canRequestAds {
-                HouseBanner(purchaseManager: purchaseManager) { showingPurchase = true }
-            }
-        }
-        .overlay {
-            if adManager.canRequestAds {
-                GeometryReader { proxy in
-                    let width = max(proxy.size.width, 320)
-                    let size = currentOrientationAnchoredAdaptiveBanner(width: width)
-                    BannerViewContainer(adSize: size) { loaded in
-                        adLoaded = loaded
-                    }
+        Group {
+            if adManager.canRequestAds && loadState != .failed {
+                VStack(spacing: 0) {
+                    Color.clear.frame(height: 8)
+                    GeometryReader { proxy in
+                        let width = max(proxy.size.width, 320)
+                        let size = currentOrientationAnchoredAdaptiveBanner(width: width)
+                        BannerViewContainer(adSize: size) { loaded in
+                            loadState = loaded ? .loaded : .failed
+                        }
                         .id(Int(size.size.width.rounded()))
                         .frame(width: size.size.width, height: size.size.height)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                        .opacity(adLoaded ? 1 : 0)
-                        .allowsHitTesting(adLoaded)
-                        .accessibilityHidden(!adLoaded)
+                        .opacity(loadState == .loaded ? 1 : 0)
+                        .allowsHitTesting(loadState == .loaded)
+                        .accessibilityHidden(loadState != .loaded)
                         .onAppear { reserveBannerHeight(size.size.height) }
                         .onChange(of: proxy.size.width) { _, newWidth in
-                            adLoaded = false
+                            loadState = .loading
                             reserveBannerHeight(currentOrientationAnchoredAdaptiveBanner(width: max(newWidth, 320)).size.height)
                         }
+                    }
+                    .frame(height: reservedHeight)
+                    .background(.regularMaterial)
                 }
             }
         }
-        .background(.regularMaterial)
         .accessibilityElement(children: .contain)
         .onChange(of: adManager.canRequestAds) { _, canRequestAds in
-            if !canRequestAds { adLoaded = false }
+            loadState = canRequestAds ? .loading : .failed
         }
-        .sheet(isPresented: $showingPurchase) { RemoveBannerView() }
     }
 
     private func reserveBannerHeight(_ adHeight: CGFloat) {
@@ -244,112 +239,7 @@ struct PersistentAdStrip: View {
     }
 }
 
-private struct HouseBanner: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @ObservedObject var purchaseManager: PurchaseManager
-    let onTap: () -> Void
-
-    var body: some View {
-        Button(action: onTap) {
-            Group {
-                if dynamicTypeSize.isAccessibilitySize {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack(alignment: .top, spacing: 9) {
-                            bannerIcon
-                            bannerCopy(wrapped: true)
-                        }
-                        bannerAction
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
-                } else {
-                    HStack(spacing: 9) {
-                        bannerIcon
-                        bannerCopy(wrapped: false)
-                        Spacer(minLength: 0)
-                        bannerAction
-                    }
-                }
-            }
-            .contentShape(Rectangle())
-            .padding(.horizontal, 11)
-            .padding(.vertical, 7)
-            .background(
-                LinearGradient(
-                    colors: [.blue.opacity(0.13), .cyan.opacity(0.07)],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                ),
-                in: RoundedRectangle(cornerRadius: 14, style: .continuous)
-            )
-            .overlay {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color.blue.opacity(0.18), lineWidth: 1)
-            }
-            .padding(.horizontal, 8)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text("banner.accessibility"))
-        .accessibilityValue(Text(verbatim: purchaseManager.product?.displayPrice ?? ""))
-    }
-
-    private var bannerIcon: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(LinearGradient(
-                    colors: [.blue, .cyan],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
-                .frame(width: 38, height: 38)
-            Image(systemName: "rectangle.slash.fill")
-                .font(.system(size: 17, weight: .bold))
-                .foregroundStyle(.white)
-        }
-        .accessibilityHidden(true)
-    }
-
-    @ViewBuilder
-    private func bannerCopy(wrapped: Bool) -> some View {
-        if wrapped {
-            VStack(alignment: .leading, spacing: 3) {
-                Text("banner.remove").font(.caption.weight(.bold))
-                Text("banner.one_time").font(.caption2.weight(.medium)).foregroundStyle(.secondary)
-            }
-            .fixedSize(horizontal: false, vertical: true)
-        } else {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("banner.remove")
-                    .font(.caption.weight(.bold))
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.9)
-                Text("banner.one_time")
-                    .font(.caption2.weight(.medium))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-            }
-        }
-    }
-
-    private var bannerAction: some View {
-        HStack(spacing: 4) {
-            Text(purchaseManager.product?.displayPrice ?? AppLocalization.text("banner.action"))
-                .lineLimit(1)
-            Image(systemName: "chevron.right")
-                .font(.caption2.weight(.heavy))
-                .accessibilityHidden(true)
-        }
-        .font(.caption.weight(.bold))
-        .foregroundStyle(.white)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 7)
-        .background(
-            LinearGradient(colors: [.blue, .cyan], startPoint: .leading, endPoint: .trailing),
-            in: Capsule()
-        )
-    }
-}
+private enum BannerLoadState: Equatable { case loading, loaded, failed }
 
 private struct BannerViewContainer: UIViewRepresentable {
     let adSize: AdSize

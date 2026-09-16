@@ -24,7 +24,7 @@ These policies describe iOS version 1.0 build 8 for the United States and Puerto
 - Catalogue: bundled April 30, 2026 USDA FoodData Central branded-food data; 426,044 selected US products
 - Runtime product API: none
 - Camera: optional barcode and shelf-price scanning; manual entry remains available
-- Advertising: Google Mobile Ads in production configuration; Google sample ads in the current TestFlight configuration; WorksBien house banner on invalid, unavailable or offline ad states
+- Advertising: Google Mobile Ads in production configuration; Google sample ads in the current TestFlight configuration; no replacement banner in invalid, unavailable or offline ad states
 - Purchase: StoreKit 2 non-consumable `com.worksbienstudios.shrinkflationpricescanner.removeads`
 - Support: `https://worksbienstudios.com/customerservice`
 
@@ -36,4 +36,3 @@ These policies describe iOS version 1.0 build 8 for the United States and Puerto
 - Spanish terms: `https://worksbienstudios.com/apps/shrinkflation-price-scanner/es-419/terms/`
 
 The app builds these routes from `AppLinks` and the active in-app language. Only English and Puerto Rico-aware Spanish routes are published.
-

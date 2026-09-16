@@ -28,7 +28,7 @@ The free app has a reserved banner area. In a production advertising configurati
 
 Google states that its Mobile Ads SDK can process information such as IP address, general location inferred from IP, device or advertising identifiers, crash logs, performance data, advertising data, app interactions, consent signals, and diagnostic information for ad delivery, measurement, analytics, fraud prevention, security, and related purposes. The exact processing depends on the released SDK, ad configuration, region, and your choices. Google handles that information under its own policies.
 
-TestFlight and development builds use Google's sample advertising identifiers and intentionally bypass the User Messaging Platform. If an ad is unavailable, the device has no connection, or the advertising configuration is invalid, the app shows a WorksBien house banner instead of making an unexplained ad claim.
+TestFlight and development builds use Google's sample advertising identifiers and intentionally bypass the User Messaging Platform. If an ad is unavailable, the device has no connection, or the advertising configuration is invalid, the app does not show a replacement house banner.
 
 When Google requires an in-app privacy-options entry point, it appears in Settings. You can also manage iOS tracking permission in the device's Settings app.
 
@@ -63,4 +63,3 @@ Shrinkflation Price Scanner is a general shopping utility and is not directed to
 WorksBien may update this policy when the app, providers, or legal requirements change. The effective date and material changes will be updated on the public policy page.
 
 WorksBien Studios Inc. is responsible for this policy. For privacy questions or requests, use the WorksBien customer support page at `https://worksbienstudios.com/customerservice`.
-

@@ -30,7 +30,7 @@ Tu historial y los vínculos aprendidos se guardan localmente. Eres responsable 
 
 ## Anuncios y Quitar banner
 
-La versión gratuita reserva un área para un banner fijo. Según la configuración y la conexión, puede mostrar un anuncio de Google o el banner propio de WorksBien.
+La versión gratuita puede mostrar un banner fijo de Google cuando los anuncios están configurados y disponibles. Si Google no puede mostrar un anuncio, la app no muestra un banner propio como reemplazo.
 
 Quitar banner es una compra integrada de un solo pago, no una suscripción. Apple muestra el precio localizado actual y maneja el pago, los impuestos, los reembolsos y la autorización. La compra quita el banner fijo mientras el derecho verificado de StoreKit esté activo. Usa Restaurar compra en Configuración para una compra elegible hecha con la misma cuenta de Apple.
 
@@ -65,4 +65,3 @@ El Contrato de licencia estándar de Apple y la ley obligatoria aplicable rigen 
 WorksBien puede actualizar estos Términos cuando cambien la app o las obligaciones legales. La fecha de vigencia se actualizará en la página pública. Continuar usando la app después de un cambio significa que aceptas los Términos revisados hasta donde lo permita la ley.
 
 Para preguntas, usa la página de servicio al cliente de WorksBien en `https://worksbienstudios.com/customerservice`.
-

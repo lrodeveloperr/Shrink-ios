@@ -92,7 +92,7 @@ def add_status_table(doc: Document) -> None:
         ("Market", "United States, including Puerto Rico; English and Puerto Rico Spanish only", "Complete"),
         ("Local shopping data", "Stored in the app container; no WorksBien account or runtime product API", "Complete"),
         ("Catalogue", "USDA FoodData Central branded-food release dated April 30, 2026; 426,044 selected products", "Complete"),
-        ("Advertising", "Google Mobile Ads, UMP/ATT when applicable, and a WorksBien fallback banner", "Production configuration pending"),
+        ("Advertising", "Google Mobile Ads and UMP/ATT when applicable; no replacement house banner", "Production configuration pending"),
         ("Purchase", "StoreKit 2 non-consumable Remove Banner entitlement and restore flow", "Complete in code; sandbox test pending"),
         ("Public routes", "English and Puerto Rico Spanish privacy and terms routes", "Prepared for deployment"),
         ("TestFlight", "Bilingual beta description, test focus, and review notes", "Prepared; intentionally not wired"),

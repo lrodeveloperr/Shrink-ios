@@ -36,7 +36,6 @@ all_text = "\n".join([content, models, scanner, database, monetization, app, pro
 
 for needle, message in [
     ("VStack(spacing: 0)", "TabView/banner sibling layout is missing"),
-    ("Color.clear.frame(height: 8)", "the required navigation/banner separation is missing"),
     (".buttonStyle(.borderedProminent)", "the native primary scan button is missing"),
     ("entry.product_not_found", "the deterministic unknown-product state is missing"),
     ("FamilyLinkerView", "the searchable saved-family linker is missing"),
@@ -76,13 +75,18 @@ for needle, message in [
     ("case production", "production-ad state is missing"),
     ("case invalid", "invalid-ad state is missing"),
     ("await refreshEntitlements()", "pre-interface entitlement resolution is missing"),
-    ("if !adLoaded || !adManager.canRequestAds", "the house banner does not cover every no-ad state"),
-    ("if !canRequestAds { adLoaded = false }", "stale ad-loaded state is not reset when permission changes"),
-    (".accessibilityHidden(!adLoaded)", "the unloaded Google banner remains exposed to accessibility"),
-    ("dynamicTypeSize.isAccessibilitySize", "the house banner has no accessibility-size layout"),
-    (".accessibilityValue(Text(verbatim:", "the house-banner price is missing from its accessibility value"),
+    ("Color.clear.frame(height: 8)", "the required navigation/banner separation is missing"),
+    ("if adManager.canRequestAds && loadState != .failed", "the Google-only banner state is missing"),
+    ("loadState = loaded ? .loaded : .failed", "Google banner failure does not collapse its container"),
+    ("loadState = canRequestAds ? .loading : .failed", "stale ad state is not reset when permission changes"),
+    (".accessibilityHidden(loadState != .loaded)", "the unloaded Google banner remains exposed to accessibility"),
 ]:
     require(monetization, needle, message)
+
+for needle, message in [
+    ("HouseBanner", "the retired WorksBien fallback banner remains"),
+]:
+    forbid(monetization, needle, message)
 
 for source, needle, message in [
     (all_text, "canada", "Canadian runtime/configuration text remains"),

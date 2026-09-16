@@ -30,7 +30,7 @@ Your history and learned barcode links are saved locally. You are responsible fo
 
 ## Advertising and Remove Banner
 
-The free app reserves an area for a fixed banner. Depending on configuration and connectivity, it can show a Google ad or a WorksBien house banner.
+The free app can show a fixed Google banner when advertising is configured and available. If Google cannot provide an ad, the app does not show a replacement house banner.
 
 Remove Banner is a one-time in-app purchase, not a subscription. Apple displays the current localized price and handles payment, taxes, refunds, and purchase authorization. The purchase removes the fixed banner while the verified StoreKit entitlement is active. Use Restore Purchase in Settings for an eligible purchase made with the same Apple Account.
 
@@ -65,4 +65,3 @@ Apple's Standard Licensed Application End User License Agreement and applicable 
 WorksBien may update these Terms when the app or legal obligations change. The effective date will be updated on the public page. Continued use after an update means you accept the revised Terms to the extent permitted by law.
 
 For questions, use the WorksBien customer support page at `https://worksbienstudios.com/customerservice`.
-
