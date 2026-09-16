@@ -1,5 +1,6 @@
 import Charts
 import SwiftUI
+import UIKit
 
 private enum RootTab: Hashable { case scan, history, impact }
 
@@ -425,7 +426,7 @@ private struct ManualStartView: View {
                         Text(validationMessage)
                             .font(.footnote)
                             .foregroundStyle(.red)
-                            .accessibilityLiveRegion(.assertive)
+                            .accessibilityLabel(validationMessage)
                     }
                 }
                 footer: { Text(AppLocalization.text("manual.barcode_optional")) }
@@ -444,7 +445,9 @@ private struct ManualStartView: View {
                         let kind: BarcodeNormalizer.Kind?
                         if requiresEightDigitFormat {
                             guard let eightDigitFormat else {
-                                validationMessage = AppLocalization.text("manual.eight_digit_required")
+                                let message = AppLocalization.text("manual.eight_digit_required")
+                                validationMessage = message
+                                UIAccessibility.post(notification: .announcement, argument: message)
                                 return
                             }
                             kind = eightDigitFormat.barcodeKind
@@ -452,7 +455,9 @@ private struct ManualStartView: View {
                             kind = nil
                         }
                         guard BarcodeNormalizer.normalizeWithMetadata(candidate, kind: kind) != nil else {
-                            validationMessage = AppLocalization.text("scanner.invalid_barcode")
+                            let message = AppLocalization.text("scanner.invalid_barcode")
+                            validationMessage = message
+                            UIAccessibility.post(notification: .announcement, argument: message)
                             return
                         }
                         onContinue(candidate, kind)
