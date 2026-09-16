@@ -16,5 +16,5 @@ Current App Store Connect US price: $2.99. Keep public copy price-free so StoreK
 - Display name: Quitar banner
 - Description: Compra de un solo pago para quitar el banner fijo de la app.
 
-Delete the obsolete French Canada localization. The purchase removes only the fixed banner; it is not a subscription and does not unlock core features.
+The purchase removes only the fixed banner; it is not a subscription and does not unlock core features.
 
