@@ -6,10 +6,17 @@ struct ShrinkflationPriceScannerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(environment)
-                .tint(.blue)
-                .task { await environment.start() }
+            Group {
+                if environment.isReady {
+                    ContentView()
+                } else {
+                    ProgressView(AppLocalization.text("app.preparing"))
+                        .accessibilityLabel(AppLocalization.text("app.preparing"))
+                }
+            }
+            .environmentObject(environment)
+            .tint(.blue)
+            .task { await environment.start() }
         }
     }
 }
@@ -22,12 +29,16 @@ final class AppEnvironment: ObservableObject {
     @Published private(set) var lastDeletedObservation: Observation?
     @Published var historyFilter = HistoryFilter()
     @Published var errorMessage: String?
+    @Published private(set) var isReady = false
 
     let purchaseManager = PurchaseManager()
     let adManager = AdManager()
     private var repository: LocalRepository?
+    private var repositoryInitializationError: String?
 
     init() {
+        UserDefaults.standard.removeObject(forKey: "preferredMarket")
+        UserDefaults.standard.removeObject(forKey: "preferredCurrency")
         if let data = UserDefaults.standard.data(forKey: "activeShoppingTrip"),
            let saved = try? JSONDecoder().decode(ShoppingTrip.self, from: data),
            Calendar.current.isDateInToday(saved.startedAt) {
@@ -39,18 +50,22 @@ final class AppEnvironment: ObservableObject {
             repository = try LocalRepository()
             refresh()
         } catch {
-            errorMessage = error.localizedDescription
+            repositoryInitializationError = error.localizedDescription
+            errorMessage = repositoryInitializationError
         }
     }
 
     func start() async {
-        await purchaseManager.start()
-        guard !purchaseManager.hasRemovedAds else { return }
-        await adManager.prepareAds()
+        await purchaseManager.resolveEntitlement()
+        isReady = true
+        await Task.yield()
+        await purchaseManager.loadProductMetadata()
+        if !purchaseManager.hasRemovedAds { await adManager.prepareAds() }
     }
 
     func product(for barcode: String) -> ProductRecord? {
-        guard let repository else { return nil }
+        guard let repository = availableRepository() else { return nil }
+        errorMessage = nil
         do {
             return try repository.lookup(barcode: barcode)
         } catch {
@@ -60,7 +75,8 @@ final class AppEnvironment: ObservableObject {
     }
 
     func save(_ draft: ObservationDraft) -> ComparisonResult? {
-        guard let repository, let observation = draft.makeObservation() else { return nil }
+        guard let observation = draft.makeObservation() else { return nil }
+        guard let repository = availableRepository() else { return nil }
         do {
             let result = try repository.save(observation)
             UserDefaults.standard.set(observation.store, forKey: "lastStore")
@@ -72,38 +88,32 @@ final class AppEnvironment: ObservableObject {
         }
     }
 
-    func captureDraft(barcode: String) -> UUID? {
-        guard let repository, let activeTrip else { return nil }
-        do {
-            let id = try repository.captureDraft(barcode: barcode, trip: activeTrip)
-            refresh()
-            return id
-        } catch {
-            errorMessage = error.localizedDescription
-            return nil
-        }
-    }
-
     func link(_ draft: inout ObservationDraft, to product: ProductRecord) {
         draft.familyID = product.familyID
+        draft.isKnownProduct = true
+        draft.source = .learned
         if draft.name.isEmpty { draft.name = product.name }
         if draft.brand.isEmpty { draft.brand = product.brand }
         if draft.variant.isEmpty { draft.variant = product.variant }
     }
 
-    func delete(_ result: ComparisonResult) {
-        guard let repository else { return }
+    @discardableResult
+    func delete(_ result: ComparisonResult) -> Bool {
+        guard let repository = availableRepository() else { return false }
         do {
             try repository.deleteObservation(id: result.current.id)
             lastDeletedObservation = result.current
             refresh()
+            return true
         } catch {
             errorMessage = error.localizedDescription
+            return false
         }
     }
 
     func undoDelete() {
-        guard let repository, let observation = lastDeletedObservation else { return }
+        guard let observation = lastDeletedObservation else { return }
+        guard let repository = availableRepository() else { return }
         do {
             try repository.restore(observation)
             lastDeletedObservation = nil
@@ -111,8 +121,10 @@ final class AppEnvironment: ObservableObject {
         } catch { errorMessage = error.localizedDescription }
     }
 
+    func expireUndo() { lastDeletedObservation = nil }
+
     func updateDecision(for result: ComparisonResult, decision: PurchaseDecision, quantity: Int) {
-        guard let repository else { return }
+        guard let repository = availableRepository() else { return }
         do {
             try repository.updateDecision(id: result.current.id, decision: decision, quantity: quantity)
             refresh()
@@ -120,7 +132,7 @@ final class AppEnvironment: ObservableObject {
     }
 
     func deleteAllData() {
-        guard let repository else { return }
+        guard let repository = availableRepository() else { return }
         do {
             try repository.deleteAllUserData()
             activeTrip = nil
@@ -133,7 +145,7 @@ final class AppEnvironment: ObservableObject {
     }
 
     func refresh() {
-        guard let repository else { return }
+        guard let repository = availableRepository() else { return }
         do {
             recentComparisons = try repository.recentComparisons()
             recentProducts = try repository.recentProducts()
@@ -163,9 +175,21 @@ final class AppEnvironment: ObservableObject {
             UserDefaults.standard.removeObject(forKey: "activeShoppingTrip")
             return
         }
-        if let data = try? JSONEncoder().encode(activeTrip) {
+        do {
+            let data = try JSONEncoder().encode(activeTrip)
             UserDefaults.standard.set(data, forKey: "activeShoppingTrip")
+        } catch {
+            errorMessage = AppLocalization.text("error.database_save", error.localizedDescription)
         }
+    }
+
+    private func availableRepository() -> LocalRepository? {
+        guard let repository else {
+            errorMessage = repositoryInitializationError
+                ?? AppLocalization.text("error.database_open", AppLocalization.text("error.try_again"))
+            return nil
+        }
+        return repository
     }
 
     func impactSummary(currency: CurrencyCode, results: [ComparisonResult]) -> ImpactSummary {

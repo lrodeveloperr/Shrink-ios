@@ -87,6 +87,7 @@ final class LocalRepository {
         try user.execute("""
             CREATE TABLE IF NOT EXISTS learned_products (
                 barcode TEXT PRIMARY KEY NOT NULL, family_id TEXT NOT NULL,
+                source_barcode TEXT NOT NULL DEFAULT '', source_barcode_length INTEGER NOT NULL DEFAULT 0,
                 product_name TEXT NOT NULL, brand TEXT NOT NULL DEFAULT '', variant TEXT NOT NULL DEFAULT '',
                 quantity_value REAL NOT NULL, quantity_unit TEXT NOT NULL, pack_count INTEGER NOT NULL DEFAULT 1,
                 category TEXT NOT NULL DEFAULT '', updated_at REAL NOT NULL
@@ -104,17 +105,27 @@ final class LocalRepository {
             ("branch", "TEXT NOT NULL DEFAULT ''"), ("channel", "TEXT NOT NULL DEFAULT 'inStore'"),
             ("price_type", "TEXT NOT NULL DEFAULT 'regular'"), ("source", "TEXT NOT NULL DEFAULT 'user'"),
             ("match_confidence", "REAL NOT NULL DEFAULT 1"), ("decision", "TEXT NOT NULL DEFAULT 'none'"),
-            ("purchase_quantity", "INTEGER NOT NULL DEFAULT 1"), ("is_draft", "INTEGER NOT NULL DEFAULT 0")
+            ("purchase_quantity", "INTEGER NOT NULL DEFAULT 1"), ("is_draft", "INTEGER NOT NULL DEFAULT 0"),
+            ("source_barcode", "TEXT NOT NULL DEFAULT ''"), ("source_barcode_length", "INTEGER NOT NULL DEFAULT 0")
         ]
         let columns = try tableColumns("observations")
         for (name, declaration) in migrations where !columns.contains(name) {
             try user.execute("ALTER TABLE observations ADD COLUMN \(name) \(declaration);")
         }
+        let learnedMigrations: [(String, String)] = [
+            ("source_barcode", "TEXT NOT NULL DEFAULT ''"),
+            ("source_barcode_length", "INTEGER NOT NULL DEFAULT 0")
+        ]
+        let learnedColumns = try tableColumns("learned_products")
+        for (name, declaration) in learnedMigrations where !learnedColumns.contains(name) {
+            try user.execute("ALTER TABLE learned_products ADD COLUMN \(name) \(declaration);")
+        }
         try user.execute("""
             CREATE INDEX IF NOT EXISTS idx_observations_family_date ON observations(family_id, observed_at DESC);
             CREATE INDEX IF NOT EXISTS idx_observations_trip ON observations(trip_id, observed_at DESC);
             CREATE INDEX IF NOT EXISTS idx_observations_store ON observations(store COLLATE NOCASE, observed_at DESC);
-            PRAGMA user_version=2;
+            DELETE FROM observations WHERE currency <> 'USD' OR is_draft = 1;
+            PRAGMA user_version=4;
             """)
     }
 
@@ -127,57 +138,50 @@ final class LocalRepository {
 
     func lookup(barcode raw: String) throws -> ProductRecord? {
         guard let gtin = BarcodeNormalizer.normalize(raw) else { return nil }
-        if let learned = try lookupLearned(gtin: gtin) { return learned }
         let statement = try catalogue.statement("""
-            SELECT gtin14, family_id, product_name, product_name_es, product_name_fr,
-                   brand, variant, quantity_value, quantity_unit, pack_count, category, market
+            SELECT gtin14, original_gtin, original_gtin_length, usda_fdc_id,
+                   source_description, product_name, family_id, brand, category, data_source,
+                   publication_date, modified_date, available_date, discontinued_date, market_country
             FROM products WHERE gtin14 = ? LIMIT 1;
             """)
         statement.bind(gtin, at: 1)
-        guard try statement.step(), let unit = QuantityUnit.parse(statement.text(8)) else { return nil }
-        let englishName = statement.text(2)
-        let localizedName: String
-        switch AppLocalization.languageCode {
-        case "es": localizedName = statement.text(3).isEmpty ? englishName : statement.text(3)
-        case "fr": localizedName = statement.text(4).isEmpty ? englishName : statement.text(4)
-        default: localizedName = englishName
+        if try statement.step() {
+            return ProductRecord(
+                barcode: statement.text(0), familyID: statement.text(6), name: statement.text(5),
+                brand: statement.text(7), variant: "", quantityValue: 0, quantityUnit: .gram,
+                packCount: 1, category: statement.text(8), market: statement.text(14), source: .bundled,
+                originalBarcode: statement.text(1), originalBarcodeLength: statement.int(2),
+                sourceID: statement.text(3), sourceDescription: statement.text(4),
+                dataSource: statement.text(9), publicationDate: statement.text(10),
+                modifiedDate: statement.text(11), availableDate: statement.text(12),
+                discontinuedDate: statement.text(13)
+            )
         }
-        return ProductRecord(barcode: statement.text(0), familyID: statement.text(1), name: localizedName,
-                             brand: statement.text(5), variant: statement.text(6), quantityValue: statement.double(7),
-                             quantityUnit: unit, packCount: max(statement.int(9), 1), category: statement.text(10),
-                             market: statement.text(11), source: .bundled)
+        return try lookupLearned(gtin: gtin)
     }
 
     private func lookupLearned(gtin: String) throws -> ProductRecord? {
         let statement = try user.statement("""
-            SELECT barcode, family_id, product_name, brand, variant, quantity_value, quantity_unit, pack_count, category
+            SELECT barcode, family_id, source_barcode, source_barcode_length,
+                   product_name, brand, variant, quantity_value, quantity_unit, pack_count, category
             FROM learned_products WHERE barcode = ? LIMIT 1;
             """)
         statement.bind(gtin, at: 1)
-        guard try statement.step(), let unit = QuantityUnit.parse(statement.text(6)) else { return nil }
-        return ProductRecord(barcode: statement.text(0), familyID: statement.text(1), name: statement.text(2),
-                             brand: statement.text(3), variant: statement.text(4), quantityValue: statement.double(5),
-                             quantityUnit: unit, packCount: max(statement.int(7), 1), category: statement.text(8),
-                             market: "US,CA", source: .learned)
-    }
-
-    func captureDraft(barcode: String, trip: ShoppingTrip) throws -> UUID {
-        let id = UUID()
-        let observation = Observation(id: id, tripID: trip.id, familyID: "user:\(UUID().uuidString.lowercased())",
-                                      barcode: barcode, name: "", brand: "", variant: "", category: "",
-                                      quantityValue: 0, quantityUnit: .gram, packCount: 1, price: nil,
-                                      currency: trip.store.currency, store: trip.store.name, branch: "",
-                                      channel: .inStore, priceType: .regular, source: .user, matchConfidence: 0,
-                                      decision: .none, purchaseQuantity: 1, observedAt: .now, isDraft: true)
-        try insertObservation(observation)
-        return id
+        guard try statement.step(), let unit = QuantityUnit.parse(statement.text(8)) else { return nil }
+        return ProductRecord(barcode: statement.text(0), familyID: statement.text(1), name: statement.text(4),
+                             brand: statement.text(5), variant: statement.text(6), quantityValue: statement.double(7),
+                             quantityUnit: unit, packCount: max(statement.int(9), 1), category: statement.text(10),
+                             market: "US", source: .learned, originalBarcode: statement.text(2),
+                             originalBarcodeLength: statement.int(3))
     }
 
     func save(_ observation: Observation) throws -> ComparisonResult {
         let previous = try latestComparableFamilyObservation(for: observation, before: observation.observedAt)
         try user.execute("BEGIN IMMEDIATE TRANSACTION;")
         do {
-            if BarcodeNormalizer.normalize(observation.barcode) != nil { try upsertLearnedProduct(from: observation) }
+            if observation.source != .bundled, BarcodeNormalizer.normalize(observation.barcode) != nil {
+                try upsertLearnedProduct(from: observation)
+            }
             try insertObservation(observation, replacing: true)
             try user.execute("COMMIT;")
         } catch { try? user.execute("ROLLBACK;"); throw error }
@@ -188,18 +192,23 @@ final class LocalRepository {
 
     private func upsertLearnedProduct(from observation: Observation) throws {
         let statement = try user.statement("""
-            INSERT INTO learned_products (barcode, family_id, product_name, brand, variant, quantity_value, quantity_unit, pack_count, category, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO learned_products (barcode, family_id, source_barcode, source_barcode_length, product_name, brand, variant, quantity_value, quantity_unit, pack_count, category, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(barcode) DO UPDATE SET family_id=excluded.family_id, product_name=excluded.product_name,
+                source_barcode=excluded.source_barcode, source_barcode_length=excluded.source_barcode_length,
                 brand=excluded.brand, variant=excluded.variant, quantity_value=excluded.quantity_value,
                 quantity_unit=excluded.quantity_unit, pack_count=excluded.pack_count,
                 category=excluded.category, updated_at=excluded.updated_at;
             """)
-        let values: [(String, Int32)] = [(observation.barcode,1),(observation.familyID,2),(observation.name,3),(observation.brand,4),(observation.variant,5)]
+        let values: [(String, Int32)] = [
+            (observation.barcode,1),(observation.familyID,2),(observation.sourceBarcode,3),
+            (observation.name,5),(observation.brand,6),(observation.variant,7)
+        ]
         values.forEach { statement.bind($0.0, at: $0.1) }
-        statement.bind(observation.quantityValue, at: 6); statement.bind(observation.quantityUnit.rawValue, at: 7)
-        statement.bind(observation.packCount, at: 8); statement.bind(observation.category, at: 9)
-        statement.bind(observation.observedAt.timeIntervalSince1970, at: 10); _ = try statement.step()
+        statement.bind(observation.sourceBarcodeLength, at: 4)
+        statement.bind(observation.quantityValue, at: 8); statement.bind(observation.quantityUnit.rawValue, at: 9)
+        statement.bind(observation.packCount, at: 10); statement.bind(observation.category, at: 11)
+        statement.bind(observation.observedAt.timeIntervalSince1970, at: 12); _ = try statement.step()
     }
 
     private func insertObservation(_ observation: Observation, replacing: Bool = false) throws {
@@ -207,8 +216,9 @@ final class LocalRepository {
             INSERT \(replacing ? "OR REPLACE " : "")INTO observations (
                 id, family_id, barcode, product_name, brand, variant, quantity_value, quantity_unit,
                 pack_count, price, currency, store, observed_at, trip_id, category, branch, channel,
-                price_type, source, match_confidence, decision, purchase_quantity, is_draft
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                price_type, source, match_confidence, decision, purchase_quantity, is_draft,
+                source_barcode, source_barcode_length
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             """)
         let textValues: [(String, Int32)] = [
             (observation.id.uuidString,1),(observation.familyID,2),(observation.barcode,3),(observation.name,4),
@@ -216,19 +226,21 @@ final class LocalRepository {
             (observation.price.map { NSDecimalNumber(decimal: $0).stringValue } ?? "",10),
             (observation.currency.rawValue,11),(observation.store,12),(observation.tripID.uuidString,14),
             (observation.category,15),(observation.branch,16),(observation.channel.rawValue,17),
-            (observation.priceType.rawValue,18),(observation.source.rawValue,19),(observation.decision.rawValue,21)
+            (observation.priceType.rawValue,18),(observation.source.rawValue,19),(observation.decision.rawValue,21),
+            (observation.sourceBarcode,24)
         ]
         textValues.forEach { statement.bind($0.0, at: $0.1) }
         statement.bind(observation.quantityValue, at: 7); statement.bind(observation.packCount, at: 9)
         statement.bind(observation.observedAt.timeIntervalSince1970, at: 13)
         statement.bind(observation.matchConfidence, at: 20); statement.bind(observation.purchaseQuantity, at: 22)
-        statement.bind(observation.isDraft ? 1 : 0, at: 23); _ = try statement.step()
+        statement.bind(observation.isDraft ? 1 : 0, at: 23)
+        statement.bind(observation.sourceBarcodeLength, at: 25); _ = try statement.step()
     }
 
     private static let observationColumns = """
         id, family_id, barcode, product_name, brand, variant, quantity_value, quantity_unit, pack_count,
         price, currency, store, observed_at, trip_id, category, branch, channel, price_type, source,
-        match_confidence, decision, purchase_quantity, is_draft
+        match_confidence, decision, purchase_quantity, is_draft, source_barcode, source_barcode_length
         """
 
     private func latestComparableFamilyObservation(for current: Observation, before date: Date) throws -> Observation? {
@@ -251,9 +263,8 @@ final class LocalRepository {
         return newestCrossStore
     }
 
-    func recentComparisons(limit: Int = 750) throws -> [ComparisonResult] {
-        let statement = try user.statement("SELECT \(Self.observationColumns) FROM observations ORDER BY observed_at DESC, rowid DESC LIMIT ?;")
-        statement.bind(max(limit * 8, 2_000), at: 1)
+    func recentComparisons() throws -> [ComparisonResult] {
+        let statement = try user.statement("SELECT \(Self.observationColumns) FROM observations WHERE is_draft = 0 ORDER BY observed_at DESC, rowid DESC;")
         var observations: [Observation] = []
         while try statement.step() { if let value = decodeObservation(statement) { observations.append(value) } }
         var results: [ComparisonResult] = []
@@ -266,28 +277,37 @@ final class LocalRepository {
                     && $0.currency == current.currency && $0.channel == current.channel && $0.priceType == current.priceType
             } ?? candidates.first
             results.append(ComparisonEngine.compare(current: current, previous: previous))
-            if results.count == limit { break }
         }
         return results
     }
 
-    func recentProducts(limit: Int = 30) throws -> [ProductRecord] {
+    func recentProducts() throws -> [ProductRecord] {
         let statement = try user.statement("""
-            SELECT o.barcode, o.family_id, o.product_name, o.brand, o.variant, o.quantity_value,
-                   o.quantity_unit, o.pack_count, o.category
-            FROM observations o JOIN (
-                SELECT family_id, MAX(rowid) AS latest_row FROM observations WHERE is_draft = 0 GROUP BY family_id
-            ) latest ON latest.latest_row = o.rowid
-            ORDER BY o.observed_at DESC LIMIT ?;
+            SELECT current.barcode, current.family_id, current.source_barcode, current.source_barcode_length,
+                   current.product_name, current.brand, current.variant, current.quantity_value,
+                   current.quantity_unit, current.pack_count, current.category, current.source
+            FROM observations AS current
+            WHERE current.is_draft = 0
+              AND NOT EXISTS (
+                  SELECT 1 FROM observations AS newer
+                  WHERE newer.is_draft = 0
+                    AND newer.family_id = current.family_id
+                    AND (
+                        newer.observed_at > current.observed_at
+                        OR (newer.observed_at = current.observed_at AND newer.rowid > current.rowid)
+                    )
+              )
+            ORDER BY current.observed_at DESC, current.rowid DESC;
             """)
-        statement.bind(limit, at: 1)
         var products: [ProductRecord] = []
         while try statement.step() {
-            guard let unit = QuantityUnit.parse(statement.text(6)) else { continue }
-            products.append(ProductRecord(barcode: statement.text(0), familyID: statement.text(1), name: statement.text(2),
-                                          brand: statement.text(3), variant: statement.text(4), quantityValue: statement.double(5),
-                                          quantityUnit: unit, packCount: max(statement.int(7),1), category: statement.text(8),
-                                          market: "US,CA", source: .learned))
+            guard let unit = QuantityUnit.parse(statement.text(8)) else { continue }
+            products.append(ProductRecord(barcode: statement.text(0), familyID: statement.text(1), name: statement.text(4),
+                                          brand: statement.text(5), variant: statement.text(6), quantityValue: statement.double(7),
+                                          quantityUnit: unit, packCount: max(statement.int(9),1), category: statement.text(10),
+                                          market: "US", source: ProductSource(rawValue: statement.text(11)) ?? .user,
+                                          originalBarcode: statement.text(2),
+                                          originalBarcodeLength: statement.int(3)))
         }
         return products
     }
@@ -308,10 +328,11 @@ final class LocalRepository {
     }
 
     private func decodeObservation(_ s: SQLiteStatement) -> Observation? {
-        guard let id = UUID(uuidString: s.text(0)), let unit = QuantityUnit.parse(s.text(7)),
-              let currency = CurrencyCode(rawValue: s.text(10)) else { return nil }
+        guard let id = UUID(uuidString: s.text(0)), let unit = QuantityUnit.parse(s.text(7)) else { return nil }
+        let currency = CurrencyCode(rawValue: s.text(10)) ?? .usd
         return Observation(
             id: id, tripID: UUID(uuidString: s.text(13)) ?? UUID(), familyID: s.text(1), barcode: s.text(2),
+            sourceBarcode: s.text(23), sourceBarcodeLength: s.int(24),
             name: s.text(3), brand: s.text(4), variant: s.text(5), category: s.text(14),
             quantityValue: s.double(6), quantityUnit: unit, packCount: max(s.int(8),1),
             price: Decimal(string: s.text(9), locale: Locale(identifier: "en_US_POSIX")),

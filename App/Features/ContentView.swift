@@ -8,19 +8,22 @@ struct ContentView: View {
     @State private var tab: RootTab = .scan
 
     var body: some View {
-        TabView(selection: $tab) {
-            NavigationStack { ScanHomeView() }
-                .tabItem { Label(AppLocalization.text("tab.scan"), systemImage: "barcode.viewfinder") }
-                .tag(RootTab.scan)
-            NavigationStack { HistoryView() }
-                .tabItem { Label(AppLocalization.text("tab.history"), systemImage: "clock") }
-                .tag(RootTab.history)
-            NavigationStack { ImpactView() }
-                .tabItem { Label(AppLocalization.text("tab.impact"), systemImage: "chart.bar.xaxis") }
-                .tag(RootTab.impact)
-        }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            PersistentAdStrip(purchaseManager: environment.purchaseManager, adManager: environment.adManager)
+        VStack(spacing: 0) {
+            TabView(selection: $tab) {
+                NavigationStack { ScanHomeView() }
+                    .tabItem { Label(AppLocalization.text("tab.scan"), systemImage: "barcode.viewfinder") }
+                    .tag(RootTab.scan)
+                NavigationStack { HistoryView() }
+                    .tabItem { Label(AppLocalization.text("tab.history"), systemImage: "clock") }
+                    .tag(RootTab.history)
+                NavigationStack { ImpactView() }
+                    .tabItem { Label(AppLocalization.text("tab.impact"), systemImage: "chart.bar.xaxis") }
+                    .tag(RootTab.impact)
+            }
+            if !environment.purchaseManager.hasRemovedAds {
+                Color.clear.frame(height: 8)
+                PersistentAdStrip(purchaseManager: environment.purchaseManager, adManager: environment.adManager)
+            }
         }
         .alert(AppLocalization.text("Something went wrong"), isPresented: Binding(
             get: { environment.errorMessage != nil },
@@ -53,13 +56,14 @@ private struct ScanHomeView: View {
     @State private var showingSettings = false
     @State private var draft: ObservationDraft?
     @State private var result: ComparisonResult?
+    @State private var scanMessage: String?
 
     private var tripResults: [ComparisonResult] {
         guard let trip = environment.activeTrip else { return [] }
         return environment.recentComparisons.filter { $0.current.tripID == trip.id }
     }
 
-    private var caughtToday: Int {
+    private var caughtThisTrip: Int {
         tripResults.filter { $0.status == .shrinkflation }.count
     }
 
@@ -73,10 +77,6 @@ private struct ScanHomeView: View {
                     radarSurface
                     manualEntryButton
                     if let latest = tripResults.first { latestResult(latest) }
-                    Button(AppLocalization.text("Finish trip")) { environment.finishTrip() }
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 2)
                 }
             }
             .frame(maxWidth: 680)
@@ -101,14 +101,30 @@ private struct ScanHomeView: View {
         .fullScreenCover(isPresented: $showingScanner) {
             NavigationStack {
                 BarcodeScannerView { barcode, kind in
-                    guard let normalized = BarcodeNormalizer.normalize(barcode, kind: kind),
-                          let trip = environment.activeTrip else { return }
-                    let product = environment.product(for: normalized)
-                    var next = ObservationDraft(barcode: normalized, product: product, trip: trip)
-                    next.capturedDraftID = environment.captureDraft(barcode: normalized)
+                    guard let normalized = BarcodeNormalizer.normalizeWithMetadata(barcode, kind: kind) else {
+                        scanMessage = AppLocalization.text("scanner.invalid_barcode")
+                        showingScanner = false
+                        return
+                    }
+                    guard let trip = environment.activeTrip else { return }
+                    let product = environment.product(for: normalized.gtin14)
+                    guard environment.errorMessage == nil else {
+                        showingScanner = false
+                        return
+                    }
+                    let next = ObservationDraft(
+                        barcode: normalized.gtin14,
+                        sourceBarcode: normalized.sourceDigits,
+                        sourceBarcodeLength: normalized.sourceLength,
+                        product: product,
+                        trip: trip
+                    )
                     draft = next
                     showingScanner = false
-                } onError: { environment.errorMessage = $0 }
+                } onError: { scanMessage = $0 } onManual: {
+                    showingScanner = false
+                    DispatchQueue.main.async { showingManual = true }
+                }
                 .ignoresSafeArea()
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
@@ -118,103 +134,101 @@ private struct ScanHomeView: View {
             }
         }
         .sheet(isPresented: $showingManual) {
-            ManualStartView { barcode in
+            ManualStartView { barcode, barcodeKind in
                 guard let trip = environment.activeTrip else { return }
-                let normalized = barcode.flatMap { BarcodeNormalizer.normalize($0) }
-                let product = normalized.flatMap { environment.product(for: $0) }
-                var next = ObservationDraft(barcode: normalized ?? "manual:\(UUID().uuidString)", product: product, trip: trip)
-                next.capturedDraftID = environment.captureDraft(barcode: next.barcode)
+                let normalized = barcode.flatMap { BarcodeNormalizer.normalizeWithMetadata($0, kind: barcodeKind) }
+                let product = normalized.flatMap { environment.product(for: $0.gtin14) }
+                guard environment.errorMessage == nil else { return }
+                let next = ObservationDraft(
+                    barcode: normalized?.gtin14 ?? "manual:\(UUID().uuidString)",
+                    sourceBarcode: normalized?.sourceDigits,
+                    sourceBarcodeLength: normalized?.sourceLength,
+                    product: product,
+                    trip: trip
+                )
                 draft = next
                 showingManual = false
             }
         }
         .sheet(item: $draft) { value in
             ProductEntryView(initialDraft: value) { completed in
-                result = environment.save(completed)
+                guard let saved = environment.save(completed) else { return false }
+                result = saved
                 draft = nil
+                return true
             }
         }
         .sheet(item: $result) { ComparisonDetailView(result: $0) }
+        .alert(AppLocalization.text("scanner.problem"), isPresented: Binding(
+            get: { scanMessage != nil },
+            set: { if !$0 { scanMessage = nil } }
+        )) {
+            Button(AppLocalization.text("OK")) { scanMessage = nil }
+        } message: {
+            Text(scanMessage ?? AppLocalization.text("error.try_again"))
+        }
     }
 
     private var radarTripContext: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color.blue.opacity(0.11))
-                    .frame(width: 44, height: 44)
-                Image(systemName: "basket.fill")
-                    .font(.system(size: 19, weight: .semibold))
-                    .foregroundStyle(.blue)
-            }
-            VStack(alignment: .leading, spacing: 2) {
-                Text(environment.activeTrip?.store.name ?? "")
-                    .font(.headline)
-                    .lineLimit(1)
-                if let date = environment.activeTrip?.startedAt {
-                    Text(date, format: .dateTime.weekday(.wide).month(.abbreviated).day())
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(Color.blue.opacity(0.11))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "basket.fill")
+                        .font(.system(size: 19, weight: .semibold))
+                        .foregroundStyle(.blue)
                 }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(environment.activeTrip?.store.name ?? "")
+                        .font(.headline)
+                        .lineLimit(1)
+                    if let date = environment.activeTrip?.startedAt {
+                        Text(date, format: .dateTime.weekday(.wide).month(.abbreviated).day())
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer(minLength: 8)
+                Button(AppLocalization.text("Change")) { showingStorePicker = true }
+                    .font(.subheadline.weight(.semibold))
             }
-            Spacer(minLength: 8)
-            Button(AppLocalization.text("Change")) { showingStorePicker = true }
+            Divider()
+            Button(AppLocalization.text("Finish trip")) { environment.finishTrip() }
                 .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity)
         }
-        .padding(10)
+        .padding(12)
         .background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var radarSurface: some View {
-        ZStack {
-            Circle()
-                .fill(Color.blue.opacity(0.025))
-                .overlay { Circle().stroke(Color.blue.opacity(0.13)) }
-                .frame(width: 276, height: 276)
-            Circle()
-                .stroke(Color.blue.opacity(0.06), lineWidth: 9)
-                .frame(width: 228, height: 228)
-            Circle()
-                .fill(Color.blue.opacity(0.07))
-                .overlay { Circle().stroke(Color.blue.opacity(0.13)) }
-                .frame(width: 178, height: 178)
-            Button { showingScanner = true } label: {
-                VStack(spacing: 7) {
-                    Image(systemName: "barcode.viewfinder")
-                        .font(.system(size: 31, weight: .semibold))
-                    Text(AppLocalization.text("Scan product"))
-                        .font(.headline)
-                    Text(AppLocalization.text("radar.ready"))
-                        .font(.caption)
-                        .foregroundStyle(.white.opacity(0.78))
+        PremiumSurface {
+            VStack(spacing: 14) {
+                Button { showingScanner = true } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "barcode.viewfinder")
+                            .font(.title2.weight(.semibold))
+                        Text(AppLocalization.text("Scan product"))
+                            .font(.headline)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 54)
                 }
-                .foregroundStyle(.white)
-                .frame(width: 148, height: 148)
-                .background(
-                    LinearGradient(colors: [.blue.opacity(0.78), .blue], startPoint: .topLeading, endPoint: .bottomTrailing),
-                    in: Circle()
-                )
-                .shadow(color: .blue.opacity(0.24), radius: 18, y: 10)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(AppLocalization.text("Scan product"))
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .accessibilityLabel(AppLocalization.text("Scan product"))
 
-            HStack(spacing: 6) {
-                Image(systemName: "checkmark.shield.fill")
-                    .foregroundStyle(.blue)
-                Text(AppLocalization.text("radar.caught_today_format", caughtToday))
-                    .font(.caption.weight(.semibold))
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.shield.fill")
+                        .foregroundStyle(.blue)
+                    Text(AppLocalization.text("radar.caught_today_format", caughtThisTrip))
+                        .font(.caption.weight(.semibold))
+                }
+                .foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(.background, in: Capsule())
-            .overlay { Capsule().stroke(.primary.opacity(0.07)) }
-            .shadow(color: .black.opacity(0.08), radius: 10, y: 5)
-            .offset(y: 132)
         }
-        .frame(height: 294)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel(AppLocalization.text("radar.name"))
     }
 
     private var manualEntryButton: some View {
@@ -328,36 +342,21 @@ private struct StorePickerView: View {
     @Environment(\.dismiss) private var dismiss
     let onSelect: (StoreOption) -> Void
     @State private var search = ""
-    @State private var customMarket: StoreOption.Market?
+    @State private var showingCustomStore = false
     @State private var customStoreName = ""
-    @AppStorage("preferredMarket") private var preferredMarket = Locale.current.region?.identifier == "CA"
-        ? StoreOption.Market.canada.rawValue : StoreOption.Market.unitedStates.rawValue
 
     private var filtered: [StoreOption] {
-        search.isEmpty ? StoreCatalogue.all : StoreCatalogue.all.filter {
-            $0.displayName.localizedStandardContains(search) || $0.market.displayName.localizedStandardContains(search)
-        }
-    }
-    private var orderedMarkets: [StoreOption.Market] {
-        let preferred = StoreOption.Market(rawValue: preferredMarket) ?? .unitedStates
-        return [preferred] + StoreOption.Market.allCases.filter { $0 != preferred }
+        search.isEmpty ? StoreCatalogue.all : StoreCatalogue.all.filter { $0.displayName.localizedStandardContains(search) }
     }
     var body: some View {
         NavigationStack {
             List {
-                ForEach(orderedMarkets, id: \.self) { market in
-                    let stores = filtered.filter { $0.market == market }
-                    if !stores.isEmpty {
-                        Section(market.displayName) {
-                            ForEach(stores) { store in
-                                Button {
-                                    if store.name == StoreOption.customSentinel { customMarket = store.market }
-                                    else { onSelect(store) }
-                                } label: {
-                                    HStack { Text(store.displayName).foregroundStyle(.primary); Spacer(); Text(store.currency.rawValue).font(.caption).foregroundStyle(.secondary) }
-                                }
-                            }
-                        }
+                ForEach(filtered) { store in
+                    Button {
+                        if store.name == StoreOption.customSentinel { showingCustomStore = true }
+                        else { onSelect(store) }
+                    } label: {
+                        Text(store.displayName).foregroundStyle(.primary)
                     }
                 }
             }
@@ -366,34 +365,100 @@ private struct StorePickerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button(AppLocalization.text("Cancel")) { dismiss() } } }
         }
-        .alert(AppLocalization.text("Add supermarket"), isPresented: Binding(get: { customMarket != nil }, set: { if !$0 { customMarket = nil } })) {
+        .alert(AppLocalization.text("Add supermarket"), isPresented: $showingCustomStore) {
             TextField(AppLocalization.text("Supermarket name"), text: $customStoreName)
-            Button(AppLocalization.text("Cancel"), role: .cancel) { customMarket = nil }
+            Button(AppLocalization.text("Cancel"), role: .cancel) { }
             Button(AppLocalization.text("Save")) {
-                guard let market = customMarket else { return }
                 let name = customStoreName.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !name.isEmpty else { return }
-                onSelect(StoreOption(name: name, market: market, currency: market == .canada ? .cad : .usd))
+                onSelect(StoreOption(name: name, region: .current))
             }.disabled(customStoreName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
 }
 
 private struct ManualStartView: View {
+    private enum EightDigitFormat: String, CaseIterable, Identifiable {
+        case ean8 = "EAN-8"
+        case upce = "UPC-E"
+
+        var id: String { rawValue }
+        var barcodeKind: BarcodeNormalizer.Kind { self == .ean8 ? .ean8 : .upce }
+    }
+
     @Environment(\.dismiss) private var dismiss
-    let onContinue: (String?) -> Void
+    let onContinue: (String?, BarcodeNormalizer.Kind?) -> Void
     @State private var barcode = ""
+    @State private var eightDigitFormat: EightDigitFormat?
+    @State private var validationMessage: String?
+
+    private var trimmedBarcode: String { barcode.trimmingCharacters(in: .whitespacesAndNewlines) }
+    private var barcodeDigits: String { trimmedBarcode.filter(\.isNumber) }
+    private var requiresEightDigitFormat: Bool {
+        barcodeDigits.count == 8
+    }
+
     var body: some View {
         NavigationStack {
             Form {
-                Section { TextField(AppLocalization.text("UPC, EAN or GTIN"), text: $barcode).keyboardType(.numberPad) }
+                Section {
+                    TextField(AppLocalization.text("UPC, EAN or GTIN"), text: $barcode)
+                        .keyboardType(.numberPad)
+                        .onChange(of: barcode) { _ in
+                            validationMessage = nil
+                            if !requiresEightDigitFormat { eightDigitFormat = nil }
+                        }
+                    if requiresEightDigitFormat {
+                        Picker(AppLocalization.text("manual.eight_digit_format"), selection: $eightDigitFormat) {
+                            ForEach(EightDigitFormat.allCases) { format in
+                                Text(format.rawValue).tag(Optional(format))
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .accessibilityLabel(AppLocalization.text("manual.eight_digit_format"))
+                        .accessibilityHint(AppLocalization.text("manual.eight_digit_required"))
+                        Text(AppLocalization.text("manual.eight_digit_required"))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    if let validationMessage {
+                        Text(validationMessage)
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                            .accessibilityLiveRegion(.assertive)
+                    }
+                }
                 footer: { Text(AppLocalization.text("manual.barcode_optional")) }
             }
             .navigationTitle(AppLocalization.text("Enter manually"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button(AppLocalization.text("Cancel")) { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) { Button(AppLocalization.text("Continue")) { onContinue(barcode.isEmpty ? nil : barcode) } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(AppLocalization.text("Continue")) {
+                        let candidate = trimmedBarcode
+                        guard !candidate.isEmpty else {
+                            onContinue(nil, nil)
+                            return
+                        }
+                        let kind: BarcodeNormalizer.Kind?
+                        if requiresEightDigitFormat {
+                            guard let eightDigitFormat else {
+                                validationMessage = AppLocalization.text("manual.eight_digit_required")
+                                return
+                            }
+                            kind = eightDigitFormat.barcodeKind
+                        } else {
+                            kind = nil
+                        }
+                        guard BarcodeNormalizer.normalizeWithMetadata(candidate, kind: kind) != nil else {
+                            validationMessage = AppLocalization.text("scanner.invalid_barcode")
+                            return
+                        }
+                        onContinue(candidate, kind)
+                    }
+                    .disabled(requiresEightDigitFormat && eightDigitFormat == nil)
+                }
             }
         }
     }
@@ -406,9 +471,10 @@ private struct ProductEntryView: View {
     @State private var showsOptional = false
     @State private var showsPricePad = false
     @State private var showsPriceScanner = false
-    let onSave: (ObservationDraft) -> Void
+    @State private var showsFamilyLinker = false
+    let onSave: (ObservationDraft) -> Bool
 
-    init(initialDraft: ObservationDraft, onSave: @escaping (ObservationDraft) -> Void) {
+    init(initialDraft: ObservationDraft, onSave: @escaping (ObservationDraft) -> Bool) {
         _draft = State(initialValue: initialDraft); self.onSave = onSave
     }
     var body: some View {
@@ -419,30 +485,73 @@ private struct ProductEntryView: View {
                         VStack(alignment: .leading, spacing: 14) {
                             Label(draft.store, systemImage: "basket.fill").font(.subheadline.weight(.semibold)).foregroundStyle(.secondary)
                             if !draft.isKnownProduct {
-                                TextField(AppLocalization.text("Product name"), text: $draft.name).font(.title3.weight(.semibold))
-                            } else {
-                                Text([draft.brand, draft.name, draft.variant].filter { !$0.isEmpty }.joined(separator: " ")).font(.title3.weight(.bold))
+                                Label(AppLocalization.text("entry.product_not_found"), systemImage: "questionmark.barcode")
+                                    .font(.headline)
+                                    .foregroundStyle(.orange)
+                                Text(AppLocalization.text("entry.product_not_found_detail"))
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
                             }
-                            HStack(spacing: 10) {
-                                TextField(AppLocalization.text("Size"), value: $draft.quantityValue, format: .number.precision(.fractionLength(0...3)))
-                                    .keyboardType(.decimalPad).textFieldStyle(.roundedBorder)
-                                Picker(AppLocalization.text("Unit"), selection: $draft.quantityUnit) {
-                                    ForEach(QuantityUnit.allCases) { Text($0.localizedSymbol).tag($0) }
-                                }.pickerStyle(.menu).buttonStyle(.bordered)
+                            Text(AppLocalization.text("entry.product_name"))
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                            if !draft.isKnownProduct {
+                                TextField(AppLocalization.text("entry.product_name"), text: $draft.name)
+                                    .font(.title3.weight(.semibold))
+                                    .textFieldStyle(.roundedBorder)
+                            } else {
+                                Text(ProductNameFormatter.compose(brand: draft.brand, name: draft.name, variant: draft.variant)).font(.title3.weight(.bold))
+                            }
+                            if draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                validationText("entry.name_required")
+                            }
+                            HStack(alignment: .top, spacing: 10) {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Text(AppLocalization.text("entry.current_quantity"))
+                                        .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                                    TextField(AppLocalization.text("entry.current_quantity"), value: $draft.quantityValue, format: .number.precision(.fractionLength(0...3)))
+                                        .keyboardType(.decimalPad).textFieldStyle(.roundedBorder)
+                                    if draft.quantityValue <= 0 { validationText("entry.quantity_required") }
+                                }
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Text(AppLocalization.text("entry.unit"))
+                                        .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                                    Picker(AppLocalization.text("entry.unit"), selection: $draft.quantityUnit) {
+                                        ForEach(QuantityUnit.allCases) { Text($0.localizedSymbol).tag($0) }
+                                    }.pickerStyle(.menu).buttonStyle(.bordered)
+                                }
+                            }
+                            Text(AppLocalization.text("entry.shelf_price"))
+                                .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                            Button { showsPricePad = true } label: {
+                                HStack {
+                                    Text(draft.price.map(MoneyFormatter.string) ?? AppLocalization.text("entry.add_price"))
+                                    Spacer()
+                                    Image(systemName: "chevron.right").font(.caption)
+                                }
+                                .padding(11)
+                                .background(.quaternary, in: RoundedRectangle(cornerRadius: 9))
+                            }.buttonStyle(.plain)
+                            if draft.price == nil || draft.price == 0 { validationText("entry.price_required") }
+                            if ShelfPriceScannerView.isAvailable {
+                                Button { showsPriceScanner = true } label: {
+                                    Label(AppLocalization.text("Scan shelf price"), systemImage: "viewfinder")
+                                }
+                            }
+                            Picker(AppLocalization.text("entry.decision"), selection: $draft.decision) {
+                                ForEach(PurchaseDecision.allCases) { Text($0.title).tag($0) }
+                            }
+                            if draft.decision == .none { validationText("entry.decision_required") }
+                            if !draft.isKnownProduct && !environment.recentProducts.isEmpty {
+                                Button { showsFamilyLinker = true } label: {
+                                    Label(AppLocalization.text("Same product, new barcode"), systemImage: "link")
+                                }
                             }
                         }
                     }
 
                     DisclosureGroup(isExpanded: $showsOptional) {
                         VStack(spacing: 14) {
-                            Button { showsPricePad = true } label: {
-                                HStack { Text(AppLocalization.text("Price each")); Spacer(); Text(draft.price?.formatted(.currency(code: draft.currency.rawValue)) ?? AppLocalization.text("entry.add_price")); Image(systemName: "chevron.right").font(.caption) }
-                            }.buttonStyle(.plain)
-                            if ShelfPriceScannerView.isAvailable {
-                                Button { showsPriceScanner = true } label: {
-                                    Label(AppLocalization.text("Scan shelf price"), systemImage: "viewfinder")
-                                }.buttonStyle(.plain)
-                            }
                             Picker(AppLocalization.text("entry.price_type"), selection: $draft.priceType) {
                                 ForEach(PriceType.allCases) { Text($0.title).tag($0) }
                             }
@@ -454,13 +563,6 @@ private struct ProductEntryView: View {
                             Picker(AppLocalization.text("entry.channel"), selection: $draft.channel) {
                                 ForEach(SalesChannel.allCases) { Text($0.title).tag($0) }
                             }
-                            if !environment.recentProducts.isEmpty {
-                                Menu(AppLocalization.text("Same product, new barcode")) {
-                                    ForEach(environment.recentProducts) { product in
-                                        Button(product.displayName) { environment.link(&draft, to: product) }
-                                    }
-                                }
-                            }
                         }
                         .padding(.top, 14)
                     } label: {
@@ -471,21 +573,27 @@ private struct ProductEntryView: View {
                     .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
 
                     Button {
-                        onSave(draft); dismiss()
+                        if onSave(draft) { dismiss() }
                     } label: {
                         Text(AppLocalization.text("Add to trip")).font(.headline).frame(maxWidth: .infinity).padding(.vertical, 5)
                     }
                     .buttonStyle(.borderedProminent).controlSize(.large)
-                    .disabled(draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || draft.quantityValue <= 0)
+                    .disabled(!isReadyToSave)
                 }
                 .frame(maxWidth: 680)
                 .padding(16)
             }
             .background(Color(uiColor: .systemGroupedBackground))
-            .navigationTitle(draft.isKnownProduct ? AppLocalization.text("Found") : AppLocalization.text("Add item"))
+            .navigationTitle(draft.isKnownProduct ? AppLocalization.text("Found") : AppLocalization.text("entry.product_not_found"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button(AppLocalization.text("Cancel")) { dismiss() } } }
             .sheet(isPresented: $showsPricePad) { MoneyKeypad(value: $draft.price, currency: draft.currency) }
+            .sheet(isPresented: $showsFamilyLinker) {
+                FamilyLinkerView(products: environment.recentProducts, excluding: draft.familyID) { product in
+                    environment.link(&draft, to: product)
+                    showsFamilyLinker = false
+                }
+            }
             .fullScreenCover(isPresented: $showsPriceScanner) {
                 NavigationStack {
                     ShelfPriceScannerView { price in
@@ -497,6 +605,52 @@ private struct ProductEntryView: View {
             }
         }
     }
+
+    private var isReadyToSave: Bool {
+        !draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && draft.quantityValue > 0
+            && (draft.price ?? 0) > 0
+            && draft.decision != .none
+    }
+
+    private func validationText(_ key: String) -> some View {
+        Text(AppLocalization.text(key))
+            .font(.caption)
+            .foregroundStyle(.red)
+            .accessibilityLabel(AppLocalization.text(key))
+    }
+}
+
+private struct FamilyLinkerView: View {
+    @Environment(\.dismiss) private var dismiss
+    let products: [ProductRecord]
+    let excluding: String
+    let onSelect: (ProductRecord) -> Void
+    @State private var search = ""
+
+    private var filtered: [ProductRecord] {
+        products.filter {
+            $0.familyID != excluding && (search.isEmpty || $0.displayName.localizedStandardContains(search))
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List(filtered) { product in
+                Button {
+                    onSelect(product)
+                } label: {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(product.displayName).foregroundStyle(.primary)
+                        if !product.category.isEmpty { Text(product.category).font(.caption).foregroundStyle(.secondary) }
+                    }
+                }
+            }
+            .searchable(text: $search, prompt: AppLocalization.text("entry.search_families"))
+            .navigationTitle(AppLocalization.text("entry.link_family"))
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(AppLocalization.text("Cancel")) { dismiss() } } }
+        }
+    }
 }
 
 private struct MoneyKeypad: View {
@@ -506,7 +660,7 @@ private struct MoneyKeypad: View {
     @State private var digits = ""
 
     private var cents: Int { Int(digits) ?? 0 }
-    private var display: String { (Decimal(cents) / 100).formatted(.currency(code: currency.rawValue)) }
+    private var display: String { MoneyFormatter.string(Decimal(cents) / 100) }
     private let rows = [["1","2","3"],["4","5","6"],["7","8","9"],[".00","0","⌫"]]
     var body: some View {
         NavigationStack {
@@ -642,7 +796,6 @@ struct ComparisonDetailView: View {
                             Divider()
                             Label(result.current.store, systemImage: "basket")
                             Label(result.current.observedAt.formatted(date: .abbreviated, time: .omitted), systemImage: "calendar")
-                            Label(result.current.source.rawValue.capitalized, systemImage: "checkmark.seal")
                         }.padding(.top, 12)
                     } label: { Text(AppLocalization.text("result.see_evidence")).font(.headline) }
                     .padding(18).background(.background, in: RoundedRectangle(cornerRadius: 18))
@@ -661,7 +814,9 @@ struct ComparisonDetailView: View {
             }
             .sheet(isPresented: $showingEdit) {
                 ProductEntryView(initialDraft: ObservationDraft(observation: result.current)) { updated in
-                    _ = environment.save(updated); showingEdit = false
+                    guard environment.save(updated) != nil else { return false }
+                    showingEdit = false
+                    return true
                 }
             }
         }
@@ -681,7 +836,7 @@ struct HistoryView: View {
     @State private var selected: ComparisonResult?
     @State private var showingFilters = false
     @State private var showingSettings = false
-    @State private var showUndo = false
+    @State private var undoToken: UUID?
 
     private var filtered: [ComparisonResult] {
         environment.recentComparisons.filter {
@@ -689,44 +844,54 @@ struct HistoryView: View {
         }
     }
     var body: some View {
-        ScrollView {
-            VStack(spacing: 14) {
-                Button { showingFilters = true } label: {
-                    HStack { Image(systemName: "line.3.horizontal.decrease.circle"); Text(AppLocalization.text("history.filters")); Spacer(); Text(filterSummary).foregroundStyle(.secondary) }
-                        .padding(12).background(.background, in: RoundedRectangle(cornerRadius: 14))
-                }.buttonStyle(.plain)
-
-                if filtered.isEmpty {
-                    ContentUnavailableView(AppLocalization.text("No scans yet"), systemImage: "clock", description: Text(AppLocalization.text("Your saved comparisons will appear here.")))
-                        .padding(.top, 40)
-                } else {
-                    VStack(spacing: 0) {
-                        ForEach(filtered) { row in
-                            Button { selected = row } label: { ComparisonRow(result: row) }.buttonStyle(.plain)
-                                .swipeActions { Button(AppLocalization.text("Delete"), role: .destructive) { environment.delete(row); showUndo = true } }
-                            if row.id != filtered.last?.id { Divider().padding(.leading, 62) }
+        List {
+            Button { showingFilters = true } label: {
+                HStack { Image(systemName: "line.3.horizontal.decrease.circle"); Text(AppLocalization.text("history.filters")); Spacer(); Text(filterSummary).foregroundStyle(.secondary) }
+            }
+            if filtered.isEmpty {
+                ContentUnavailableView(AppLocalization.text("No scans yet"), systemImage: "clock", description: Text(AppLocalization.text("Your saved comparisons will appear here.")))
+                    .listRowBackground(Color.clear)
+            } else {
+                ForEach(filtered) { row in
+                    Button { selected = row } label: { ComparisonRow(result: row) }
+                        .buttonStyle(.plain)
+                        .swipeActions {
+                            Button(AppLocalization.text("Delete"), role: .destructive) { delete(row) }
                         }
-                    }.background(.background, in: RoundedRectangle(cornerRadius: 18))
+                        .accessibilityAction(named: AppLocalization.text("Delete")) { delete(row) }
                 }
             }
-            .frame(maxWidth: 680).padding(.horizontal, 16).padding(.top, 14).padding(.bottom, 28)
         }
-        .background(Color(uiColor: .systemGroupedBackground))
+        .listStyle(.insetGrouped)
         .navigationTitle(AppLocalization.text("History"))
         .searchable(text: $search, prompt: AppLocalization.text("history.search"))
-        .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { showingSettings = true } label: { Image(systemName: "gearshape") } } }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showingSettings = true } label: { Image(systemName: "gearshape") }
+                    .accessibilityLabel(AppLocalization.text("accessibility.settings"))
+            }
+        }
         .sheet(item: $selected) { ComparisonDetailView(result: $0) }
         .sheet(isPresented: $showingFilters) { FilterView() }
         .sheet(isPresented: $showingSettings) { NavigationStack { SettingsView() } }
         .overlay(alignment: .bottom) {
-            if showUndo {
-                HStack { Text(AppLocalization.text("history.deleted")); Spacer(); Button(AppLocalization.text("history.undo")) { environment.undoDelete(); showUndo = false } }
+            if undoToken != nil {
+                HStack { Text(AppLocalization.text("history.deleted")); Spacer(); Button(AppLocalization.text("history.undo")) { environment.undoDelete(); undoToken = nil } }
                     .padding().background(.ultraThickMaterial, in: Capsule()).padding()
-                    .task { try? await Task.sleep(for: .seconds(5)); showUndo = false }
+                    .task(id: undoToken) {
+                        guard let token = undoToken else { return }
+                        try? await Task.sleep(for: .seconds(8))
+                        guard undoToken == token else { return }
+                        environment.expireUndo()
+                        undoToken = nil
+                    }
             }
         }
     }
     private var filterSummary: String { environment.historyFilter.range.title }
+    private func delete(_ row: ComparisonResult) {
+        if environment.delete(row) { undoToken = UUID() }
+    }
 }
 
 private struct FilterView: View {
@@ -760,7 +925,7 @@ private struct ImpactPoint: Identifiable {
 
 struct ImpactView: View {
     @EnvironmentObject private var environment: AppEnvironment
-    @State private var currency: CurrencyCode = .deviceDefault
+    private let currency: CurrencyCode = .usd
     @State private var showingFilters = false
     @State private var showingSettings = false
 
@@ -777,19 +942,26 @@ struct ImpactView: View {
                 .compactMap { row in row.extraCostPerPack.map { $0 * Decimal(row.current.purchaseQuantity) } }
                 .reduce(Decimal.zero, +)
             return [ImpactPoint(day: day, kind: AppLocalization.text("impact.you"), value: NSDecimalNumber(decimal: protectedWeighted).doubleValue), ImpactPoint(day: day, kind: AppLocalization.text("impact.shrinkflation"), value: NSDecimalNumber(decimal: cost).doubleValue)]
-        }
+        }.filter { $0.value > 0 }
     }
+    private var chartUpperBound: Double { max((points.map(\.value).max() ?? 0) * 1.15, 1) }
     var body: some View {
         ScrollView {
             VStack(spacing: 18) {
-                Picker(AppLocalization.text("impact.currency"), selection: $currency) { ForEach(CurrencyCode.allCases) { Text($0.rawValue).tag($0) } }.pickerStyle(.segmented)
                 PremiumSurface {
                     VStack(spacing: 18) {
                         HStack { Label(AppLocalization.text("impact.scorecard"), systemImage: "sportscourt").font(.headline); Spacer(); Text(AppLocalization.text("impact.scored", summary.scoredBouts)).font(.caption).foregroundStyle(.secondary) }
-                        HStack(spacing: 0) {
-                            scoreColumn(title: AppLocalization.text("impact.you_protected"), value: summary.protected, color: .blue)
-                            Rectangle().fill(.quaternary).frame(width: 1, height: 70)
-                            scoreColumn(title: AppLocalization.text("impact.it_cost_you"), value: summary.cost, color: .red)
+                        ViewThatFits {
+                            HStack(spacing: 0) {
+                                scoreColumn(title: AppLocalization.text("impact.you_protected"), value: summary.protected, color: .blue)
+                                Rectangle().fill(.quaternary).frame(width: 1, height: 70)
+                                scoreColumn(title: AppLocalization.text("impact.it_cost_you"), value: summary.cost, color: .red)
+                            }
+                            VStack(spacing: 14) {
+                                scoreColumn(title: AppLocalization.text("impact.you_protected"), value: summary.protected, color: .blue)
+                                Divider()
+                                scoreColumn(title: AppLocalization.text("impact.it_cost_you"), value: summary.cost, color: .red)
+                            }
                         }
                     }
                 }
@@ -802,11 +974,26 @@ struct ImpactView: View {
                 } else {
                     PremiumSurface {
                         Chart(points) { point in
-                            BarMark(x: .value("Date", point.day, unit: .day), y: .value("Amount", point.value))
-                                .foregroundStyle(by: .value("Side", point.kind)).position(by: .value("Side", point.kind))
+                            BarMark(
+                                x: .value(AppLocalization.text("chart.date"), point.day, unit: .day),
+                                y: .value(AppLocalization.text("chart.amount"), point.value)
+                            )
+                            .foregroundStyle(by: .value(AppLocalization.text("chart.series"), point.kind))
+                            .position(by: .value(AppLocalization.text("chart.series"), point.kind))
                         }
                         .chartForegroundStyleScale([AppLocalization.text("impact.you"): Color.blue, AppLocalization.text("impact.shrinkflation"): Color.red])
-                        .chartYAxis { AxisMarks(position: .leading) }
+                        .chartYScale(domain: 0...chartUpperBound)
+                        .chartYAxis {
+                            AxisMarks(position: .leading) { value in
+                                AxisGridLine()
+                                AxisTick()
+                                AxisValueLabel {
+                                    if let amount = value.as(Double.self) {
+                                        Text(MoneyFormatter.string(Decimal(amount)))
+                                    }
+                                }
+                            }
+                        }
                         .frame(height: 210)
                     }
                 }
@@ -818,14 +1005,16 @@ struct ImpactView: View {
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Button { showingFilters = true } label: { Image(systemName: "line.3.horizontal.decrease.circle") }
+                    .accessibilityLabel(AppLocalization.text("accessibility.filters"))
                 Button { showingSettings = true } label: { Image(systemName: "gearshape") }
+                    .accessibilityLabel(AppLocalization.text("accessibility.settings"))
             }
         }
         .sheet(isPresented: $showingFilters) { FilterView() }
         .sheet(isPresented: $showingSettings) { NavigationStack { SettingsView() } }
     }
     private func scoreColumn(title: String, value: Decimal, color: Color) -> some View {
-        VStack(spacing: 5) { Text(title).font(.caption.weight(.semibold)).foregroundStyle(.secondary); Text(value.formatted(.currency(code: currency.rawValue))).font(.title2.weight(.bold)).foregroundStyle(color) }.frame(maxWidth: .infinity)
+        VStack(spacing: 5) { Text(title).font(.caption.weight(.semibold)).foregroundStyle(.secondary); Text(MoneyFormatter.string(value)).font(.title2.weight(.bold)).foregroundStyle(color) }.frame(maxWidth: .infinity)
     }
     private func metric(title: String, value: String, icon: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 8) { Image(systemName: icon).foregroundStyle(color); Text(value).font(.title2.weight(.bold)); Text(title).font(.caption).foregroundStyle(.secondary) }
@@ -836,17 +1025,10 @@ struct ImpactView: View {
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var environment: AppEnvironment
-    @AppStorage("preferredMarket") private var market = Locale.current.region?.identifier == "CA"
-        ? StoreOption.Market.canada.rawValue : StoreOption.Market.unitedStates.rawValue
     @State private var showingDelete = false
     @State private var showingPurchase = false
     var body: some View {
         List {
-            Section(AppLocalization.text("settings.market")) {
-                Picker(AppLocalization.text("settings.market"), selection: $market) {
-                    ForEach(StoreOption.Market.allCases, id: \.rawValue) { Text($0.displayName).tag($0.rawValue) }
-                }
-            }
             Section(AppLocalization.text("Ads")) {
                 Button { showingPurchase = true } label: { Label(AppLocalization.text("Remove Ads Forever"), systemImage: "rectangle.slash") }
                     .disabled(environment.purchaseManager.hasRemovedAds)
@@ -950,7 +1132,7 @@ struct RemoveBannerView: View {
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button(AppLocalization.text("Cancel")) { dismiss() } } }
         }
         .presentationDetents([.medium])
-        .task { await environment.purchaseManager.start() }
+        .task { await environment.purchaseManager.loadProductMetadata() }
         .alert(AppLocalization.text("Something went wrong"), isPresented: Binding(
             get: { environment.purchaseManager.errorMessage != nil },
             set: { if !$0 { environment.purchaseManager.errorMessage = nil } }

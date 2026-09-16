@@ -13,11 +13,19 @@ struct ProductRecord: Identifiable, Hashable, Sendable {
     var category: String
     var market: String
     var source: ProductSource
+    var originalBarcode: String = ""
+    var originalBarcodeLength: Int = 0
+    var sourceID: String = ""
+    var sourceDescription: String = ""
+    var dataSource: String = ""
+    var publicationDate: String = ""
+    var modifiedDate: String = ""
+    var availableDate: String = ""
+    var discontinuedDate: String = ""
 
     var displayName: String {
-        [brand, name, variant]
-            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-            .joined(separator: " ")
+        if source == .bundled { return [name, variant].filter { !$0.isEmpty }.joined(separator: " ") }
+        return ProductNameFormatter.compose(brand: brand, name: name, variant: variant)
     }
     var packageDescription: String {
         PackageFormatter.description(value: quantityValue, unit: quantityUnit, packCount: packCount)
@@ -25,6 +33,17 @@ struct ProductRecord: Identifiable, Hashable, Sendable {
 }
 
 enum ProductSource: String, Hashable, Codable, Sendable { case bundled, learned, user }
+
+enum ProductNameFormatter {
+    static func compose(brand: String, name: String, variant: String) -> String {
+        let cleanBrand = brand.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let brandIsAlreadyPresent = !cleanBrand.isEmpty && cleanName.lowercased().hasPrefix(cleanBrand.lowercased())
+        return [brandIsAlreadyPresent ? "" : cleanBrand, cleanName, variant.trimmingCharacters(in: .whitespacesAndNewlines)]
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
+}
 enum QuantityDimension: String, Hashable, Codable, Sendable { case mass, volume, count }
 
 enum QuantityUnit: String, CaseIterable, Identifiable, Codable, Hashable, Sendable {
@@ -90,9 +109,22 @@ enum PackageFormatter {
 }
 
 enum CurrencyCode: String, CaseIterable, Identifiable, Codable, Hashable, Sendable {
-    case usd = "USD", cad = "CAD"
+    case usd = "USD"
     var id: String { rawValue }
-    static var deviceDefault: CurrencyCode { Locale.current.currency?.identifier == "CAD" ? .cad : .usd }
+    static var deviceDefault: CurrencyCode { .usd }
+}
+
+enum MoneyFormatter {
+    static func string(_ value: Decimal) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = Locale.current
+        formatter.currencyCode = "USD"
+        formatter.currencySymbol = "$"
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        return formatter.string(from: value as NSDecimalNumber) ?? "$0.00"
+    }
 }
 
 enum SalesChannel: String, CaseIterable, Identifiable, Codable, Hashable, Sendable {
@@ -118,6 +150,8 @@ struct Observation: Identifiable, Hashable, Sendable {
     var tripID: UUID
     var familyID: String
     var barcode: String
+    var sourceBarcode: String = ""
+    var sourceBarcodeLength: Int = 0
     var name: String
     var brand: String
     var variant: String
@@ -141,19 +175,19 @@ struct Observation: Identifiable, Hashable, Sendable {
     var normalizedQuantity: Double { quantityUnit.normalize(value: quantityValue, packCount: packCount) }
     var normalizedUnit: String { quantityUnit.normalizedSymbol }
     var displayName: String {
-        let composed = [brand, name, variant]
-            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-            .joined(separator: " ")
+        let composed = ProductNameFormatter.compose(brand: brand, name: name, variant: variant)
         return composed.isEmpty ? AppLocalization.text("status.unknown_product") : composed
     }
     var packageDescription: String { PackageFormatter.description(value: quantityValue, unit: quantityUnit, packCount: packCount) }
-    var formattedPrice: String? { price?.formatted(.currency(code: currency.rawValue)) }
+    var formattedPrice: String? { price.map(MoneyFormatter.string) }
 }
 
 struct ObservationDraft: Identifiable, Sendable {
     let id: UUID
     var tripID: UUID
     var barcode: String
+    var sourceBarcode: String
+    var sourceBarcodeLength: Int
     var familyID: String
     var name: String
     var brand: String
@@ -170,45 +204,63 @@ struct ObservationDraft: Identifiable, Sendable {
     var priceType: PriceType
     var observedAt: Date
     var isKnownProduct: Bool
+    var source: ProductSource
     var purchaseQuantity: Int
+    var decision: PurchaseDecision
     var capturedDraftID: UUID?
 
-    init(barcode: String, product: ProductRecord?, trip: ShoppingTrip) {
+    init(
+        barcode: String,
+        sourceBarcode: String? = nil,
+        sourceBarcodeLength: Int? = nil,
+        product: ProductRecord?,
+        trip: ShoppingTrip
+    ) {
         id = UUID(); tripID = trip.id; self.barcode = barcode
+        self.sourceBarcode = sourceBarcode ?? product?.originalBarcode ?? barcode
+        self.sourceBarcodeLength = sourceBarcodeLength ?? product?.originalBarcodeLength ?? 0
         familyID = product?.familyID ?? "user:\(UUID().uuidString.lowercased())"
-        name = product?.name ?? ""; brand = product?.brand ?? ""; variant = product?.variant ?? ""
-        category = product?.category ?? ""; quantityValue = product?.quantityValue ?? 0
+        name = product?.name ?? ""
+        brand = product?.source == .bundled ? "" : (product?.brand ?? "")
+        variant = product?.variant ?? ""
+        category = product?.category ?? ""; quantityValue = 0
         quantityUnit = product?.quantityUnit ?? .gram; packCount = product?.packCount ?? 1
         price = nil; currency = trip.store.currency; store = trip.store.name; branch = ""
         channel = .inStore; priceType = .regular; observedAt = .now
-        isKnownProduct = product != nil; purchaseQuantity = 1; capturedDraftID = nil
+        isKnownProduct = product != nil; source = product?.source ?? .user
+        purchaseQuantity = 1; decision = .none; capturedDraftID = nil
     }
 
     init(observation: Observation) {
         id = UUID(); tripID = observation.tripID; barcode = observation.barcode
+        sourceBarcode = observation.sourceBarcode; sourceBarcodeLength = observation.sourceBarcodeLength
         familyID = observation.familyID; name = observation.name; brand = observation.brand
         variant = observation.variant; category = observation.category
         quantityValue = observation.quantityValue; quantityUnit = observation.quantityUnit
         packCount = observation.packCount; price = observation.price; currency = observation.currency
         store = observation.store; branch = observation.branch; channel = observation.channel
         priceType = observation.priceType; observedAt = observation.observedAt
-        isKnownProduct = observation.source != .user; purchaseQuantity = observation.purchaseQuantity
+        isKnownProduct = observation.source != .user; source = observation.source
+        purchaseQuantity = observation.purchaseQuantity
+        decision = observation.decision
         capturedDraftID = observation.id
     }
 
     func makeObservation() -> Observation? {
         let cleanName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !cleanName.isEmpty, quantityValue > 0, packCount > 0 else { return nil }
+        guard !cleanName.isEmpty, quantityValue > 0, packCount > 0,
+              let price, price > 0, decision != .none else { return nil }
         return Observation(
             id: capturedDraftID ?? UUID(), tripID: tripID, familyID: familyID, barcode: barcode,
+            sourceBarcode: sourceBarcode, sourceBarcodeLength: sourceBarcodeLength,
             name: cleanName, brand: brand.trimmingCharacters(in: .whitespacesAndNewlines),
             variant: variant.trimmingCharacters(in: .whitespacesAndNewlines),
             category: category.trimmingCharacters(in: .whitespacesAndNewlines),
             quantityValue: quantityValue, quantityUnit: quantityUnit, packCount: packCount,
             price: price, currency: currency, store: store,
             branch: branch.trimmingCharacters(in: .whitespacesAndNewlines), channel: channel,
-            priceType: priceType, source: isKnownProduct ? .bundled : .user,
-            matchConfidence: isKnownProduct ? 1 : 0.7, decision: .none,
+            priceType: priceType, source: source,
+            matchConfidence: source == .bundled ? 1 : (source == .learned ? 0.9 : 0.7), decision: decision,
             purchaseQuantity: max(purchaseQuantity, 1), observedAt: observedAt, isDraft: false
         )
     }
@@ -216,14 +268,16 @@ struct ObservationDraft: Identifiable, Sendable {
 
 struct StoreOption: Identifiable, Hashable, Codable, Sendable {
     static let customSentinel = "__other_supermarket__"
-    enum Market: String, CaseIterable, Codable, Sendable {
-        case canada = "Canada", unitedStates = "United States"
-        var displayName: String { AppLocalization.text(self == .canada ? "market.canada" : "market.united_states") }
+    enum Region: String, Codable, Sendable {
+        case unitedStates = "US", puertoRico = "PR"
+        static var current: Region {
+            Locale.current.region?.identifier.uppercased() == "PR" ? .puertoRico : .unitedStates
+        }
     }
     let name: String
-    let market: Market
-    let currency: CurrencyCode
-    var id: String { "\(market.rawValue):\(name)" }
+    let region: Region
+    var currency: CurrencyCode { .usd }
+    var id: String { "\(region.rawValue):\(name)" }
     var displayName: String { name == Self.customSentinel ? AppLocalization.text("store.other") : name }
 }
 
@@ -234,11 +288,24 @@ struct ShoppingTrip: Identifiable, Hashable, Codable, Sendable {
 }
 
 enum StoreCatalogue {
-    private static let canada = ["Walmart", "Costco", "Loblaws", "Real Canadian Superstore", "No Frills", "Zehrs", "Fortinos", "Maxi", "Provigo", "Metro", "Food Basics", "Sobeys", "FreshCo", "Safeway", "Save-On-Foods", "IGA", "Co-op", "Longo’s", "Farm Boy", "Giant Tiger", "T&T Supermarket", "Shoppers Drug Mart", "London Drugs", "Whole Foods Market", "Amazon Fresh"]
-    private static let unitedStates = ["Walmart", "Costco", "Kroger", "Albertsons", "Safeway", "Publix", "Aldi", "Trader Joe’s", "Target", "Whole Foods Market", "Sam’s Club", "H-E-B", "Meijer", "Wegmans", "Food Lion", "Giant Food", "Stop & Shop", "ShopRite", "Harris Teeter", "Sprouts", "WinCo", "Hy-Vee", "Jewel-Osco", "Ralphs", "Vons", "Acme", "Shaw’s", "Star Market", "Market Basket", "Piggly Wiggly", "Save A Lot", "Grocery Outlet", "BJ’s Wholesale", "Dollar General", "Family Dollar", "Walgreens", "CVS", "Amazon Fresh", "Fred Meyer", "QFC", "Mariano’s", "King Soopers", "Smith’s", "Fry’s", "Dillons", "Food 4 Less", "Raley’s", "Stater Bros.", "Gelson’s", "Central Market", "SuperMax", "Pueblo", "Econo", "Selectos"]
-    static let all = make(canada, market: .canada, currency: .cad) + make(unitedStates, market: .unitedStates, currency: .usd)
-    private static func make(_ names: [String], market: StoreOption.Market, currency: CurrencyCode) -> [StoreOption] {
-        (names + [StoreOption.customSentinel]).map { StoreOption(name: $0, market: market, currency: currency) }
+    private static let mainland = ["Walmart", "Costco", "Kroger", "Albertsons", "Safeway", "Publix", "Aldi", "Trader Joe’s", "Target", "Whole Foods Market", "Sam’s Club", "H-E-B", "Meijer", "Wegmans", "Food Lion", "Giant Food", "Stop & Shop", "ShopRite", "Harris Teeter", "Sprouts", "WinCo", "Hy-Vee", "Jewel-Osco", "Ralphs", "Vons", "Acme", "Shaw’s", "Star Market", "Market Basket", "Piggly Wiggly", "Save A Lot", "Grocery Outlet", "BJ’s Wholesale", "Dollar General", "Family Dollar", "Walgreens", "CVS", "Amazon Fresh", "Fred Meyer", "QFC", "Mariano’s", "King Soopers", "Smith’s", "Fry’s", "Dillons", "Food 4 Less", "Raley’s", "Stater Bros.", "Gelson’s", "Central Market"]
+    private static let puertoRico = ["Walmart", "Costco", "SuperMax", "Pueblo", "Econo", "Selectos", "Amigo", "Walgreens", "CVS", "Sam’s Club"]
+
+    static var all: [StoreOption] {
+        let region = StoreOption.Region.current
+        let primaryNames = region == .puertoRico ? puertoRico : mainland
+        let secondaryNames = region == .puertoRico ? mainland : puertoRico
+        let secondaryRegion: StoreOption.Region = region == .puertoRico ? .unitedStates : .puertoRico
+        var seen = Set<String>()
+        let primary = primaryNames.map { StoreOption(name: $0, region: region) }
+        let secondary = secondaryNames.map { StoreOption(name: $0, region: secondaryRegion) }
+        let ordered = (primary + secondary).filter {
+            let chainIdentity = $0.name
+                .folding(options: [.diacriticInsensitive], locale: .current)
+                .lowercased()
+            return seen.insert(chainIdentity).inserted
+        }
+        return ordered + [StoreOption(name: StoreOption.customSentinel, region: region)]
     }
 }
 
@@ -343,21 +410,44 @@ struct HistoryFilter: Equatable, Sendable {
 
 enum BarcodeNormalizer {
     enum Kind: Equatable, Sendable { case upce, ean8, other }
+    struct Value: Equatable, Sendable {
+        let gtin14: String
+        let sourceDigits: String
+        let sourceLength: Int
+    }
+
     static func normalize(_ raw: String, kind: Kind? = nil) -> String? {
-        let digits = raw.filter(\.isNumber)
+        normalizeWithMetadata(raw, kind: kind)?.gtin14
+    }
+
+    static func normalizeWithMetadata(_ raw: String, kind: Kind? = nil) -> Value? {
+        let digits = extractGTINDigits(raw)
         let expanded: String
         switch digits.count {
         case 8:
-            guard isValidGTIN(digits) else { return nil }
             let treatAsUPCE = kind == .upce || (kind == nil && (digits.first == "0" || digits.first == "1"))
-            if treatAsUPCE { guard let upca = expandUPCE(digits) else { return nil }; expanded = "00" + upca }
-            else { expanded = String(repeating: "0", count: 6) + digits }
+            if treatAsUPCE {
+                guard let upca = expandUPCE(digits), isValidGTIN(upca) else { return nil }
+                expanded = "00" + upca
+            } else {
+                guard isValidGTIN(digits) else { return nil }
+                expanded = String(repeating: "0", count: 6) + digits
+            }
         case 12: guard isValidGTIN(digits) else { return nil }; expanded = "00" + digits
         case 13: guard isValidGTIN(digits) else { return nil }; expanded = "0" + digits
         case 14: guard isValidGTIN(digits) else { return nil }; expanded = digits
         default: return nil
         }
-        return expanded
+        return Value(gtin14: expanded, sourceDigits: digits, sourceLength: digits.count)
+    }
+
+    private static func extractGTINDigits(_ raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let range = trimmed.range(of: #"(?:\(01\)|01)(\d{14})"#, options: .regularExpression) {
+            let matched = String(trimmed[range])
+            return String(matched.filter(\.isNumber).suffix(14))
+        }
+        return trimmed.filter(\.isNumber)
     }
     static func isValidGTIN(_ digits: String) -> Bool {
         guard [8, 12, 13, 14].contains(digits.count), digits.allSatisfy(\.isNumber), let expected = digits.last?.wholeNumberValue else { return false }
@@ -365,7 +455,8 @@ enum BarcodeNormalizer {
         return (10 - (sum % 10)) % 10 == expected
     }
     private static func expandUPCE(_ digits: String) -> String? {
-        let v = digits.compactMap(\.wholeNumberValue); guard v.count == 8 else { return nil }
+        let v = digits.compactMap(\.wholeNumberValue)
+        guard v.count == 8, v[0] == 0 || v[0] == 1 else { return nil }
         let manufacturer: [Int], product: [Int]
         switch v[6] {
         case 0, 1, 2: manufacturer = [v[1], v[2], v[6], 0, 0]; product = [0, 0, v[3], v[4], v[5]]

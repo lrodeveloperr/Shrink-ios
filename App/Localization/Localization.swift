@@ -3,7 +3,6 @@ import Foundation
 enum AppLocalization {
     static var languageCode: String {
         let preferred = Locale.preferredLanguages.first?.lowercased() ?? "en"
-        if preferred.hasPrefix("fr") { return "fr" }
         if preferred.hasPrefix("es") { return "es" }
         return "en"
     }
@@ -16,7 +15,6 @@ enum AppLocalization {
 
     static var policyLocalePath: String {
         switch languageCode {
-        case "fr": "fr-ca"
         case "es": "es-419"
         default: "en"
         }

@@ -1,7 +1,0 @@
-barcode,product_name_en,product_name_es,product_name_fr,brands,quantity,countries_tags,categories_tags,last_modified_t,unique_scans_n
-200000000011,Demo Potato Chips,Papas fritas de muestra,Croustilles de démonstration,Sample Brand,200 g,"en:united-states,en:puerto-rico,en:canada",en:snacks,1788912000,100
-200000000028,Demo Ground Coffee,Café molido de muestra,Café moulu de démonstration,Sample Brand,12 oz,"en:united-states,en:canada",en:coffees,1788912000,90
-200000000035,Demo Laundry Pods,Cápsulas de detergente de muestra,Capsules de détergent de démonstration,Sample Home,42 pods,"en:united-states,en:canada",en:laundry-detergents,1788912000,80
-200000000042,Demo Paper Towels,Toallas de papel de muestra,Essuie-tout de démonstration,Sample Home,6 rolls,"en:united-states,en:canada",en:paper-towels,1788912000,70
-200000000059,Demo Pet Treats,Premios para mascotas de muestra,Gâteries pour animaux de démonstration,Sample Pet,500 g,"en:united-states,en:canada",en:pet-treats,1788912000,60
-200000000066,Demo Baby Wipes,Toallitas para bebé de muestra,Lingettes pour bébé de démonstration,Sample Care,72 wipes,"en:united-states,en:canada",en:baby-wipes,1788912000,50

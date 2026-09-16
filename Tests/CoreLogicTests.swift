@@ -9,6 +9,13 @@ final class CoreLogicTests: XCTestCase {
 
     func testExpandsUPCEBeforeNormalizing() {
         XCTAssertEqual(BarcodeNormalizer.normalize("04252614"), "00042100005264")
+        XCTAssertEqual(BarcodeNormalizer.normalize("10102817", kind: .upce), "00101100000287")
+        XCTAssertEqual(BarcodeNormalizer.normalize("10102817", kind: .ean8), "00000010102817")
+        XCTAssertNil(BarcodeNormalizer.normalize("20102816", kind: .upce))
+    }
+
+    func testExtractsGS1ApplicationIdentifier() {
+        XCTAssertEqual(BarcodeNormalizer.normalize("(01)00036000291452(10)ABC"), "00036000291452")
     }
 
     func testRejectsInvalidCheckDigit() {
@@ -59,7 +66,7 @@ final class CoreLogicTests: XCTestCase {
 
     func testShelfPriceExtractionPrefersCurrencyValue() {
         XCTAssertEqual(ShelfPriceScannerView.extractPrice(from: "SAVE 10%  $4.99"), Decimal(string: "4.99"))
-        XCTAssertEqual(ShelfPriceScannerView.extractPrice(from: "CAD 12,49"), Decimal(string: "12.49"))
+        XCTAssertEqual(ShelfPriceScannerView.extractPrice(from: "US$ 12,49"), Decimal(string: "12.49"))
     }
 
     private func observation(

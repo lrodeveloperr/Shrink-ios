@@ -1,0 +1,153 @@
+gtin14,reason,source_sha256,product_name
+00018374011102,fish_grade,2657363cde1f87f76d1322f90eec76fecbbc65a05f7b685b1dc3e86bf04863d8,Langostino Meat 60-90 ct
+00021140019417,fish_grade,e91dee14296cd001dbdbe4ce26c93e1a4dcae98a80483ae4f44750b755118419,51/60 Easy-Peel Shrimp
+00024732232263,fish_grade,c05ab2afdf3159b37af45b269d9e9391b2fc02f9a39e1fa6d655d2ce348b3c95,100/150 Cooked Peeled & Deveined Shrimp
+00024732244938,fish_grade,e8787dace0a40ff15dee18a8a2a37d98e18295c918baf0bc9a0f9a3398d2c7be,16/20 Easy-Peel Shrimp
+00024732245430,fish_grade,e8787dace0a40ff15dee18a8a2a37d98e18295c918baf0bc9a0f9a3398d2c7be,16/20 Easy-Peel Shrimp
+00041498272425,fish_grade,73001fbcdda888a50db867d3616f7e295a6669bdfd8d21a942389921b069804e,41/60 Raw Peeled & Deveined Shrimp
+00049029002589,fish_grade,544de6189f1765813aa9f0792a4fb19e489e30b38e51c2e77ecf921d2e35e141,26/30 Raw El Peelo Shrimp
+00049029003821,fish_grade,c1dcd0c2ba2a7a0188f872f36be7f2e21b9274cf760d1c58b4cafe550b633963,16/20 Raw Peeled & Deveined Tail-On Shrimp
+00049029005672,fish_grade,e47e592abcc1347e58449536ae5640ef93def762480bbd15e036754555f60f57,16/20 Raw Argentine Red Shrimp
+00070038576525,fish_grade,97a60917cee2708cea92cd516727c7790965f6929481f8d026cce9c7ac220ccf,21/30 Cooked Peeled Tail-On Shrimp
+00070038576532,fish_grade,3c55e11f5ac70145fb9d76bdfe5995fa2af7bb0af3466ea35d008de2309fb37a,31/40 Cooked Peeled Tail-On Shrimp
+00070038576549,fish_grade,439a56121371bb781e53cd4d02e9e0a2e3440b3307e92a9266e8e5dc66e548c7,52/70 Cooked Peeled & Deveined Tail-Off Shrimp
+00070038612742,fish_grade,7675d6aa381af9ab1ebf046270a217b15280310fed9ce549fc9d410b829921a3,41/50 Easy-Peel Shrimp
+00070038627203,fish_grade,3c55e11f5ac70145fb9d76bdfe5995fa2af7bb0af3466ea35d008de2309fb37a,31/40 Cooked Peeled Tail-On Shrimp
+00070038627210,fish_grade,e667d60309e07936ef910c5f81dc4d6f5c1f352348b7eb85ae4019f7f7201adf,41/50 Cooked Peeled Tail-On Shrimp
+00070038640011,fish_grade,8ea9a0b7a576afa2c80ad84015ae6cae6deef9f161ac262e67fb7176c8977608,100/150 Cooked Peeled & Deveined Shrimp
+00070366983309,fish_grade,b2000be3d4eac718a77a3d5532b2ba1c4e6b1948cfad941374958404a7ed8540,41/50 Cooked Peeled & Deveined Tail-On Shrimp
+00070366984672,fish_grade,da829791dfab7cf411f85c46a672a453ad1162e40ec1add41c84e195ad3eda4d,41/50 Individually Quick Frozen Shell-On Shrimp
+00070366984689,fish_grade,da829791dfab7cf411f85c46a672a453ad1162e40ec1add41c84e195ad3eda4d,41/50 Individually Quick Frozen Shell-On Shrimp
+00070784031767,fish_grade,59cf1f94fc7a0d476c5a9cc95b298bd8f18dda5435fcf94f6d09510d7cc083a5,16/25 Domestic Shell-On Shrimp
+00070784031774,fish_grade,e0802a0e79c163555a7fe41da7b4200b9258a655c70276cecaf5e07c07185baa,30/40 Domestic Peeled & Deveined Shrimp
+00072431050015,fish_grade,0c969694bbf1240410e64f895b37b737ba0802ed76f75ada368ded9c95f39e49,41/50 Cooked Peeled & Deveined Shrimp
+00072431050060,fish_grade,547fac2bc0ee0ca6c4ac79b457e8e5dc5d298f611c64bb4b9e4f33d46a12ac4c,26/35 Cooked Peeled Tail-On Shrimp
+00072431050077,fish_grade,cf3ebaf3d0eb46e5bba5cd3ddf1e5a0e7c709de0ef4bff4cb2a7304baf481799,26/30 Peeled & Deveined Tail-On Shrimp
+00072431050091,fish_grade,479695104dd69c230d6914946013848f926a1eacf1e144bc29ee72363dc1c81e,41/50 Peeled & Deveined Shrimp
+00075391000328,fish_grade,b4642318d3c88ab0229d3b8a3a6c48ae63910fc8e72125bd8a77e9c488d0e894,8/12 Shell-On Tiger Shrimp
+00075391000670,fish_grade,e91dee14296cd001dbdbe4ce26c93e1a4dcae98a80483ae4f44750b755118419,51/60 Easy-Peel Shrimp
+00075391000915,fish_grade,8257edc001522c28efdbc910c1c4c85e21c79b9bf6cc4f1801ff36feb75d7556,4/6 Oz. CO Vacuum-Packed Redfish
+00075391000922,fish_grade,8fc2f62072d8110ba9a88727ca7bf302137d95e0348923084ef256ddbf965981,10/12 Oz. CO Vacuum-Packed Redfish
+00075391001004,fish_grade,ba46cec61838dd6f03520cd9ca480526b4e027506de3e7713883bd53f1bbb15d,70/90 Cooked Peeled & Deveined Tail-On Shrimp
+00075391001462,fish_grade,0ed7cf0a80cd27588d7c8704bc794f80a713900e379c106ed7e082120b7a6556,21/25 Peeled & Deveined Tail-On Shrimp
+00075391001479,fish_grade,cf3ebaf3d0eb46e5bba5cd3ddf1e5a0e7c709de0ef4bff4cb2a7304baf481799,26/30 Peeled & Deveined Tail-On Shrimp
+00075391001486,fish_grade,9a74d79315c327806be8779eb04195ace556aece016be76897cfff4aafbf18b3,40/50 Peeled & Deveined Tail-On Shrimp
+00075391002193,fish_grade,9b867c39acb92d5f87d874f86844bdf0bbfd25d7ee1eb8f75956d58c1324a895,10/20 Count Individually Quick Frozen Scallops
+00075391003312,fish_grade,fbb8ec1eeb22f3ab7192d44a0df60a517b3027867ae6a262987ce0a3ea31f8ca,31/40 Easy-Peel Shrimp
+00075391003343,fish_grade,aa83410fb3a430250a801d232538630e7840cba8c721e7e9be59b0b03305f403,50/60 Cooked Peeled & Deveined Tail-On Shrimp
+00075391003756,fish_grade,a4f6eef12fbd8c069bf33b4fa24192072d75dbd730bd554700c00a7e5bd2b15e,20/30 Count Individually Quick Frozen Scallops
+00075391004012,fish_grade,5e1e5b1c3f7463c4769cdc42f3e7546c40e09e74782fa2cf4b194bfa0c0926fb,6/8 Head-On F/W Shrimp
+00075391004050,fish_grade,b49a60f6ef4ae7d6f39fa94a8f51b70df15d30e79b28ee581da5421737e9c725,4/6 Block Shell-On Shrimp
+00075391004494,fish_grade,4a94e17e1d0d319438072972858a6dc4bd2794e49bc722ca7ff8ce66832a1037,20/30 Count Block Scallops
+00075391005354,fish_grade,29fcab1bbb3a0fd73a2fa02d5e4b9a4ca8d450253bb6333a01606b622dbfb600,30/40 Individually Quick Frozen Scallops
+00075391006177,fish_grade,a20c813a1c240dfd8420b2ccfadf426054550172d6fc9c27fd4c6d00ad6ecbc7,30/40 Count Individually Quick Frozen Scallops
+00075391006344,fish_grade,5bdec431e76cd412d4a2bf40fab36598f9bdfb1604cc63a3253750e6a40df34b,21/25 Domestic Shell-On White Shrimp
+00075391006757,fish_grade,e27df4a76a00a7f9405044b2a21502a2aa0448f21f870553a6540cabd1579c96,16/20 Coconut Breaded Shrimp
+00075391006962,fish_grade,479695104dd69c230d6914946013848f926a1eacf1e144bc29ee72363dc1c81e,41/50 Peeled & Deveined Shrimp
+00075391006979,fish_grade,479695104dd69c230d6914946013848f926a1eacf1e144bc29ee72363dc1c81e,41/50 Peeled & Deveined Shrimp
+00075391007228,fish_grade,5c9c8e65d7eb27b7b03a09f06cd0554c6af4a411ca6cb7e0e38bed8525a41a37,21/25 Easy-Peel Shrimp
+00075391007303,fish_grade,cb8c642c1a89f12d73fd92de49e74664f4bf6da936047ea39bc68a611feb8a80,51/60 Easy Peel-and-Eat Shrimp
+00075391007624,fish_grade,43dae8267d1c225bfdbdd5e1437dd250d71987b44b27cf375774b36184d02b0b,21/30 Count Easy-Peel Shrimp
+00075391007952,fish_grade,3a7961fe87a27156b32fc086bff392db5f1df09661a8c11fdd7b0f5be65a0f3d,26/30 Individually Quick Frozen Peeled & Deveined Shrimp
+00075391009871,fish_grade,200ef906a4140ff0ca6b1d00582580387ab9fc56d5b349ebb2ed354ef3816422,80/120 Count Individually Quick Frozen Scallops
+00075391010419,fish_grade,ba8b812cb9bf30aeb3b165f8172eef343dd7a7bf482e995641a998de288e751d,60/70 Peeled & Deveined Shrimp
+00075391010587,fish_grade,a16bae090934985a3fb1e1a634d7a7cc65804bb94229a49af04cb48e8687ba01,21/25 Breaded Torpedo Shrimp
+00075391010969,fish_grade,3e9834f21f36f30c109d2d9a3b20811404ee3173632339820d511b6442ae7ac9,12/16 Count Breaded Butterfly Shrimp
+00075391011157,fish_grade,d18aae883c24423d4a47c92a9d6c0ae1e27226a9292dfabd65ce95c8cfd048c5,8/10 Oz. Unicorn Filefish
+00075391011515,fish_grade,3397ffecb0679065e6c413080b4127d06d3e9a75c86a88774776054bc50f7b8e,26/30 Domestic Shell-On White Shrimp
+00075391013311,fish_grade,ee963169ff6ab007ede1dde4c63d0e9faa73f0816d1169faacb85ae30ce784a7,40/60 Breaded Scallops
+00075391013397,fish_grade,f7dd8b3dfad251036921202295a1f394e980b4bd174f731c22fede66636328ea,8/12 Easy-Peel Shrimp
+00075391013953,fish_grade,d4ba9b71af250bdcf054701144c1b356428d37eae8b4620d9b2abcca263909da,13/15 Cooked Peeled & Deveined Tail-On Shrimp
+00075391015223,fish_grade,5345bbb42848eded0eebf82dab3840a517b12072dcc6f5bbd32a93fe2b547dff,40/60 Count Individually Quick Frozen Scallops
+00075391953778,fish_grade,cc257e94f79b5a0f4e4bf420109eb744e3bcc4318d9045cc843f7950a9c752c7,20 Oz. and Up Lobster Tails
+00033900616064,piece_rate,ca66df9a668a1096c8582285b81c452302270b3cd2f48d72003873b75bcbce36,"Dry Aged, Naturally Smoked Hickory Bacon, Raw, 18-22 Slices per lb., Certified Gluten-Free"
+00033900616156,piece_rate,ab219b61409e2350977306245af7917e8732161f2532e07c5f83d31bced8218b,"Dry Aged, Naturally Smoked Hickory Bacon, Raw, 9-11 Slices per lb., Certified Gluten-Free"
+00033900616408,piece_rate,82d552f605f0aa1618f4987155bcdb232070fab9da2c83706a19fdb12ad43b90,"Dry Aged, Naturally Smoked Cherrywood Bacon, Raw, 14-18 Slices per lb., Certified Gluten-Free"
+00033900616415,piece_rate,c4fb8aef134d9084ca55c1733537283c74649741f8e52104d5f9f1e4ab585230,"Dry Aged, Naturally Smoked Cherrywood Bacon, Raw, 9-11 Slices per lb., Certified Gluten-Free"
+00033900616453,piece_rate,483d3a698efe26af10c68575eb3044edf1f3cd772f7cb71462a539f33aeaf044,"Dry Aged, Naturally Smoked Cherrywood Bacon, Raw, 18-22 Slices per lb., Certified Gluten-Free"
+00033900616606,piece_rate,f124ac841f05f89d5422a44e2aaadf1ba1c13ea0c3f74e6f4292b18fa6939dba,"Uncured, Dry-Aged, All Natural Cherrywood Smoked Bacon, Grill Ready, 14-18 Slices per lb., Certified Gluten-Free"
+00033900616736,piece_rate,78d263d282b26e7cf0b8e4715a2403c6b446771591984573a4017ce1c068579b,"Dry Aged, Naturally Smoked Hickorywood Bacon End to End, Raw, 18-22 Slices per lb., Certified Gluten-Free"
+00033900616743,piece_rate,c4fb8aef134d9084ca55c1733537283c74649741f8e52104d5f9f1e4ab585230,"Dry Aged, Naturally Smoked Cherrywood Bacon, Raw, 9-11 Slices per lb., Certified Gluten-Free"
+00079618381160,piece_rate,2590d89942473cbe4de991edc675a3d7b59fbbb2a925b57c40cb11aa8142cf75,"Nugget Hardwood Smoked Premium Sugar Cured Bacon, Layered, 16-18 Slices per Pound"
+00079621000676,piece_rate,f43a6979d959f89e4b7eb1a8279bf410b9e9469319d6d66c384e2ef3fedf369e,"Wright Brand Naturally Hickory Smoked Thin Sliced Flat-Pack Bacon, 18-22 Slices per Pound"
+00079621000706,piece_rate,538e902ac91bc01324c7a0786f8b49be0c8f6c4ccc1e3fd13c09387e523a1aa1,"Wright Brand Naturally Hickory Smoked Regular Sliced Flat-Pack Bacon, 14-18 Slices per Pound"
+00079621001185,piece_rate,2c84cec1bf40e8a5e1a7f7577c2f60a3381a38f532cc8b534f97089db20480ad,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Bulk, 18-22 Slices Per Pound"
+00079621001222,piece_rate,68463f29ece65a9dea29df7251782a6037df864a3a16020f1bfa09bbee589bfc,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Flat-Pack, 18-22 Slices per Pound, Gas Flushed"
+00079621001239,piece_rate,ee401f83edb2b4a2f63276d0dee12a3544f58f6a6017393050e90863e924650f,"Wright Brand Naturally Hickory Smoked Regular Sliced Flat-Pack Bacon, 14-18 Slices per Pound, Gas Flushed"
+00079621001444,piece_rate,538e902ac91bc01324c7a0786f8b49be0c8f6c4ccc1e3fd13c09387e523a1aa1,"Wright Brand Naturally Hickory Smoked Regular Sliced Flat-Pack Bacon, 14-18 Slices per Pound"
+00079621001550,piece_rate,fe7896aa9a842697920c3d8fdc82f73eacfa317048cb0e25b5920c4390d98a47,"Wright Brand Naturally Hickory Smoked Bacon, Flat-Pack, 18-22 Slices per Pound"
+00079621001826,piece_rate,931b2ec2711257b7852b3dd6a85ff0a8b4d62cdbb9f91b4e256a83cf325349d6,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 5 Slices/Inch"
+00079621002823,piece_rate,74e28de1692065b0c492b50e5fb0b758b5dab4ff48607efd47aef4dd84eeb7c3,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Bulk, 18-22 Slices Per Pound, Gas Flushed"
+00079621003004,piece_rate,019d2d58d19535554dc887005ef4f5670b9ba2dbefad9a629a407166abd9265b,"Wright Brand Naturally Applewood Smoked Thin Sliced Bacon, Flat-Pack, 18-22 Slices per Pound, Gas Flushed"
+00079621003011,piece_rate,79daf318e9e08b46d9c2f692f25f906e99f699a969f71944ec1c5fd409cb8d1c,"Wright Brand Naturally Applewood Smoked Regular Sliced Bacon, Flat-Pack, 14-18 Slices per Pound, Gas Flushed"
+00079621003028,piece_rate,a27320a3a88dfe7ae8f8630fe8aa3602a7bd816d85cf655c5ebfbba38bcbe82c,"Wright Brand Naturally Applewood Smoked Thick Sliced Flat-Pack Bacon, 10-14 Slices per Pound, Gas Flushed"
+00079621003035,piece_rate,9051686f46c1ec7df8cd1587ab08b330477da0afd11e292b5f793dddaf1fafba,"Wright Brand Naturally Applewood Smoked Thin Sliced Bacon, Bulk, 18-22 Slices per Pound, Gas Flushed"
+00079621003059,piece_rate,800facb0cd8b0993049dfac32962503c95c29bf9c7cac1b282b5fd5158a0d368,"Wright Brand Naturally Applewood Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound, Gas Flushed"
+00079621003646,piece_rate,ce944c3fcbeb6a515b32b405b74047ef173442f7219e8c33b99140bccf29786b,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 10-14 Slices per Pound, Gas Flushed"
+00079621003653,piece_rate,2144d6d4587bf94d1d2afce11d1a4da01c4c929588a862b4aa467cb7fd4b3287,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 10-14 Slices per Pound"
+00079621003684,piece_rate,3448f2f83f2d9d06de24a9d95ac3dd1dbb1965809f0dfd48941861a9b0cb7c6d,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 5 Slices/Inch"
+00079621003691,piece_rate,001fc75aa32535d17c93b91a2ea9003eb396cbf8cfd7ddaad3b339295e8f4fe0,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 10-14 Slices per Pound"
+00079621003707,piece_rate,cdc5a0d8f4d54525fa677149b0ac0aa7fb05e42474a40293e973480c3466e074,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound"
+00079621003721,piece_rate,ce944c3fcbeb6a515b32b405b74047ef173442f7219e8c33b99140bccf29786b,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 10-14 Slices per Pound, Gas Flushed"
+00079621003738,piece_rate,f8f443f96b14e496911ec94d07aa7b28c860437102e09a9c1c61b648dc5250cb,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Flat-Pack, 14-18 Slices per Pound, Gas Flushed"
+00079621003745,piece_rate,7e6121518ba030505070de15afe0a608469fe2f106bebfe04b73b5ffd994e577,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Flat-Pack, 10-14 Slices per Pound, Gas Flushed"
+00079621003752,piece_rate,5d1d15bdda6ee42922227c74b1780683c164f721ef3cb21afe54a5c2478c8538,"Wright Brand Naturally Applewood Smoked Thick Sliced Bacon, Flat-Pack, 10-14 Slices per Pound"
+00079621003769,piece_rate,ed4dfad02bb560ca850c6ab89d78e2f43cd804656b7302cf6fec0c52fe67c3de,"Wright Brand Naturally Applewood Smoked Thick Sliced Bacon, Flat-Pack, 10-14 Slices Per Pound, Gas Flushed"
+00079621003783,piece_rate,001fc75aa32535d17c93b91a2ea9003eb396cbf8cfd7ddaad3b339295e8f4fe0,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 10-14 Slices per Pound"
+00079621003790,piece_rate,391197624b7705e72bf611079e11a38fbf703f40becb8821c53bd33ccb6af422,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Bulk, 18-22 Slices per Pound"
+00079621003806,piece_rate,489ae2139147480aea5c19386cb3841c684145999d2e82cfc36bc425141d7f42,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound"
+00079621003813,piece_rate,b0655b981096bc1994f6d7ee816a771d503e76ea993821907fa24a88e4fa3e08,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 6 Slices/Inch"
+00079621003820,piece_rate,4a2b69ff8641a33a7cd96a3b02219dc857c2bfa317e60b7fb01bab1ae9c9f37d,"Wright Brand Naturally Smoked Thin Sliced Bacon, Bulk, 18-22 Slices per Pound"
+00079621003837,piece_rate,6521198902e7be3211e422721045fc76b26956032890f37e773e72b78275c0bb,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound"
+00079621003899,piece_rate,3272d3704185ad3cc5e62efa0829490594381cda938826c8b4f806e2ceba9373,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Bulk, 9 Slices/Inch"
+00079621003905,piece_rate,af84303cf0ce2eecf7c4e8386d35f1e4f860342edb3e4cf80947a9cdc743da84,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 6 Slices/Inch"
+00079621003912,piece_rate,242d20bd7f5d2b1847aaa170f277081f85b32767d036d217690fb92aa64e3ea0,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 5 Slices/Inch"
+00079621003929,piece_rate,489ae2139147480aea5c19386cb3841c684145999d2e82cfc36bc425141d7f42,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound"
+00079621003936,piece_rate,6d9141ee4b030f886946ab64df7d543703b75788b725715e16f5f74f3ebe8e50,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 10-14 Slices per Pound"
+00079621003943,piece_rate,e2ef9eacb2aadb1160e62036d52f8989b15ad18be1dccd40975c764a7397db86,"Wright Brand Naturally Hickory Smoked Extra Thick Sliced Bacon, Bulk, 8-10 Slices per Pound"
+00079621003950,piece_rate,f349ed3bb3966a0946015990ac63e8fe6333c40536837a5c7d7daa32e083fcb8,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Bulk, 18-22 Slices Per Pound"
+00079621003967,piece_rate,7647a5d5197b25bc2a608551285eca8525f6327ce14a619f44df5a97f5003595,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound, Gas Flushed"
+00079621003974,piece_rate,fd34651a8ecc0f0b0e2df604497703a0f66585bdd18af6b07a3faa6b14122cc6,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Bulk, 18-22 Slices per Pound, Gas Flushed"
+00079621004018,piece_rate,8f480f654d2e7f02a1f67f260642f416ed0d638faf9ac274b09ac40d0e1bed5b,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Bulk, 18-22 Slices per Pound"
+00079621004025,piece_rate,6521198902e7be3211e422721045fc76b26956032890f37e773e72b78275c0bb,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound"
+00079621004032,piece_rate,3715905ec723ef2a3f60b6cac4ccd5875e3b570cd668da738c6c332916134d13,"Wright Brand Naturally Applewood Smoked Thick Sliced Bacon, Bulk, 10-14 Slices per Pound, Gas Flushed"
+00079621004049,piece_rate,29be6dd95e99941f95a45991460948e83da53d900aa3b4b1a421772d374394a0,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 10-14 Slices per Pound, Gas Flushed"
+00079621004063,piece_rate,97da790998e07a15696475d1fa2f50b529dcf6dc43068119b28ef8f84c49575c,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Bulk, 10-14 Slices Per Pound, Gas Flushed"
+00079621004070,piece_rate,b7bb87645b1629c5e65b4a97ad5617e9e92f581b36c76b1cf80a443797053a13,"Wright Naturally Hickory Smoked Bulk Bacon, 9 Slices per Inch"
+00079621004087,piece_rate,a918215de7ad9a4987d1cc71365eac3494bbf19dc00a95a68270d2a2004b51b8,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 6 Slices/Inch"
+00079621004094,piece_rate,98bf0a387905e48eabaa197075141700215bd324fab9bf6f91174f793b1c63a4,"Wright Brand Naturally Applewood Smoked Thin Sliced Bacon, Bulk, 18-22 Slices per pound, Gas Flushed"
+00079621004162,piece_rate,6573362d479f794614426403c1238eda495d79573f7ef815fb688e81dbb8d117,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Flat-Pack, 10-14 Slices per Pound, Gas Flushed"
+00079621004179,piece_rate,e584530f234d0c15fc1f603bd94c171717026cd3d30cd26433e2ff40198aab4f,"Wright Brand Naturally Smoked Thick Sliced Bacon, Flat-Pack, 10-14 Slices per Pound"
+00079621004193,piece_rate,c8cde4a2ccdd7293648421c092d886897ae1364589aa7c713a47dea7d4451257,"Wright Brand Naturally Hickory Smoked Extra Thick Sliced Bacon, Flat-Pack, 8-10 Slices per Pound"
+00079621004209,piece_rate,1d2b010cb2c37911c197581dc71186f7caca4801f50ea8ef332e18c9136d2000,"Wright Brand Naturally Hickory Smoked Thick Sliced Bacon, Flat-Pack, 10-14 Slices per Pound"
+00079621004247,piece_rate,7647a5d5197b25bc2a608551285eca8525f6327ce14a619f44df5a97f5003595,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound, Gas Flushed"
+00079621004285,piece_rate,fd34651a8ecc0f0b0e2df604497703a0f66585bdd18af6b07a3faa6b14122cc6,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Bulk, 18-22 Slices per Pound, Gas Flushed"
+00079621004292,piece_rate,493e387be6ebdc7c82d983a70dc6b98cf8e4c5d7811a9d4d634078c5cf109607,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Flat Pack, 18-22 Slices per Pound, Gas Flushed"
+00079621004308,piece_rate,2391949c21208b860d1b6a396afcc20f5ffd64302272d952bfbd429da815c1e7,"Wright Brand Naturally Applewood Smoked Regular Sliced Bacon, Flat-Pack, 14-18 Slices per Pound"
+00079621004315,piece_rate,9f30570d7f3a0b1c1c591eb189ce429170b56a3b52893d5dbe96d9b89940ecef,"Wright Brand Naturally Applewood Smoked Thin Sliced Bacon, Flat-Pack, 18-22 Slices per Pound"
+00079621004339,piece_rate,f8f443f96b14e496911ec94d07aa7b28c860437102e09a9c1c61b648dc5250cb,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Flat-Pack, 14-18 Slices per Pound, Gas Flushed"
+00079621004360,piece_rate,68463f29ece65a9dea29df7251782a6037df864a3a16020f1bfa09bbee589bfc,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Flat-Pack, 18-22 Slices per Pound, Gas Flushed"
+00079621004377,piece_rate,79daf318e9e08b46d9c2f692f25f906e99f699a969f71944ec1c5fd409cb8d1c,"Wright Brand Naturally Applewood Smoked Regular Sliced Bacon, Flat-Pack, 14-18 Slices per Pound, Gas Flushed"
+00079621004384,piece_rate,f55e9ce8720d538ca9a25b03f3ec5cbd3926548fc88f0ce8a056b4b50dbeb6c0,"Wright Brand Naturally Applewood Smoked Thin Sliced Bacon, Flat-Pack, 18-22 Slices per pound, Gas Flushed"
+00079621004414,piece_rate,531ac146e9c9c2caff0e5c5ca447caa2107de4110846e8ca732f23e445448a3b,"Wright Brand Naturally Hickory Smoked Extra Extra Thick Sliced Steak Cut Bacon, Bulk, 2 Slices/Inch, Gas Flushed"
+00079621004513,piece_rate,b6d1dc8678ed71353f5196fbda2fe3fc9e0f197f1f45ec7c6afe90da300699d0,"Wright Brand Naturally Hickory Smoked Peppered Regular Sliced Bacon, Bulk, 6 Slices per Inch"
+00079621009013,piece_rate,7647a5d5197b25bc2a608551285eca8525f6327ce14a619f44df5a97f5003595,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound, Gas Flushed"
+00079621009419,piece_rate,a5ac12a517c313b382231e88829a4a3c340cb418528342b0dd5d6d36bfdfa235,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, Bulk, 18-22 Slices per Pound, Gas Flushed"
+00079621009518,piece_rate,59249071a823aebf0d009a7a6d68b86b3743fce2e2d16f9ee34ae7cd956a7f03,"Wright Brand Naturally Hickory Smoked Regular Sliced Bacon, Bulk, 14-18 Slices per Pound, Gas Flushed"
+00079621013485,piece_rate,1066cdf9390b6c6ad6594baf1f95a3cffe3ec9ddc773ed904a08512492297e16,"Wright Brand Naturally Hickory Smoked Extra Thin Sliced Bacon, Flat-Pack, 22-26 Slices per Pound"
+00079621016011,piece_rate,a6d02cdba1df875d8f0e0de06c1b5caf9a5daac0a34808e3a228b5bbc8f29c38,"Wright Brand Naturally Applewood Smoked Thick Sliced Bacon, Bulk, 10-14 Slices per Pound, Gas Flushed"
+10037600087763,piece_rate,944127694b68980c47db20eae92d1e14aa8055702706d8a28fda28f5d353eb7c,Hormel Layout Lower Sodium Bacon 18-22 Slices Per Pound
+00040913011137,reviewed_grade,da5fa562818185d3f47b4d3796ecef33311a98d7607ed75e7cd24fd3309019f4,"Whole Dill Pickles, 96-104 Count per 5-Gallon Pail"
+00040913013223,reviewed_grade,5a39412898e246fe81855ad21e5e5fb038a56909c889d9855420bedec2f56680,"Hot Dill Pickles, 7-9 Count per Gallon"
+00040913013230,reviewed_grade,0cbc1ba610aa392582b8959ec0a96bca09b337e1db082bb478c9041270608042,"Whole Hot Dill Pickles, 14-16 Count per Gallon"
+00040913013322,reviewed_grade,22e0c5453221cd2e95f12f573a1eee58462df4c06ac81a38d830b7c8db47d37a,"Kosher Style Pickles, 7-9 Count per Gallon"
+00040913013346,reviewed_grade,cb1b0f55bf943d543bcdc4ecf2a8c9281142f4555ea9d87d9862b0bad10a1cfe,"Kosher Style Pickles, 18-22 Count per Gallon"
+00040913013438,reviewed_grade,e47abd7f04468bdfd9a899df4ac6f973c4fb5e0b6364b0ea9c9789d62a9f4e11,"Whole Sour Pickles, 14-16 Count per Gallon"
+00042222267618,reviewed_grade,3a028ede24c5962b25997671e3b6292ad97b81c93be8485e3e257ce28aee486b,"JENNIE-O Turkey Burgers, 1/3-Lb"
+00070796500039,reviewed_grade,6ab1155a7ba4358bf0c4a18186cc9b86e78104f4e295e134b7ed38e38a76e954,8-10 Count Artichoke Hearts
+00070796500077,reviewed_grade,422b175e4918604e3c60171b2c0e1e15e50ebd569be2dcfa863c9572fb9b3bd7,5-7 Count Artichoke Hearts
+00079041826030,reviewed_grade,01e7e3f68a0b6462de42f4bf3c6bf7ec314ddbedc5bdde764e02ec1f4bd2f4ed,80% Lean 20% Fat 1/3-Lb Angus Burgers
+00079618331400,reviewed_grade,6a909a7362b40fafeefba91b417c97a11d0a673516a55928864d78692d507ba7,"Bacon Slab Slice, 10/14 ct"
+00079618331509,reviewed_grade,8fd62e925b4a2189aba492abdc2130c59dda4d79d93df635ee589b169df77861,"Bacon Slab Slice, 14/18 ct"
+00851927004028,reviewed_grade,b8269676ee5d60e5dddd66bf4dc05065aeec64a70e47169bd784b6906ed64650,"JP O'Reilly's Pub Burger, 1/3-Lb"
+00079621003844,slices_per_inch,9c47cb39ae31ac3bed1ea462faaa80e14114798ce7770c3651f2226853dbda3f,"Wright Brand Naturally Hickory Smoked Thin Sliced Bacon, 9 Slices/Inch"

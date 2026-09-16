@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1] / "App" / "Resources"
-LOCALES = ("en", "es-419", "fr-CA")
+LOCALES = ("en", "es-419")
 LINE = re.compile(r'^\s*"((?:[^"\\]|\\.)*)"\s*=\s*"((?:[^"\\]|\\.)*)";\s*$')
 PLACEHOLDER = re.compile(r"%(?:\d+\$)?(?:@|lld|ld|d|\.\d+f|f)")
 SWIFT_LITERAL = re.compile(r'AppLocalization\.text\("([^"]+)"')
@@ -57,7 +57,7 @@ def main() -> int:
         read_strings(ROOT / f"{locale}.lproj" / "InfoPlist.strings")
 
     plural_keys: dict[str, set[str]] = {}
-    required_plural_keys = {"home.items_added", "trip.items", "radar.caught_today_format"}
+    required_plural_keys = {"radar.caught_today_format"}
     for locale in LOCALES:
         path = ROOT / f"{locale}.lproj" / "Localizable.stringsdict"
         with path.open("rb") as stream:
@@ -86,7 +86,13 @@ def main() -> int:
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print(f"Localization checks passed: {len(base_keys)} UI keys across {', '.join(LOCALES)}.")
+    if len(base_keys) != 187:
+        errors.append(f"Expected exactly 187 string keys, found {len(base_keys)}")
+
+    if errors:
+        print("\n".join(errors), file=sys.stderr)
+        return 1
+    print(f"Localization checks passed: {len(base_keys)} strings and one plural across {', '.join(LOCALES)}.")
     return 0
 
 

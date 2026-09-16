@@ -5,6 +5,35 @@ import UIKit
 import GoogleMobileAds
 import UserMessagingPlatform
 
+enum AdMode: Equatable {
+    case googleSampleTest
+    case production
+    case invalid
+}
+
+enum AdConfiguration {
+    static let googleSampleAppID = "ca-app-pub-3940256099942544~1458002511"
+    static let googleSampleBannerID = "ca-app-pub-3940256099942544/2435281174"
+
+    static func mode(in bundle: Bundle = .main) -> AdMode {
+        guard let appID = bundle.object(forInfoDictionaryKey: "GADApplicationIdentifier") as? String,
+              let bannerID = bundle.object(forInfoDictionaryKey: "GADBannerAdUnitID") as? String else { return .invalid }
+        if appID == googleSampleAppID && bannerID == googleSampleBannerID { return .googleSampleTest }
+        if appID == googleSampleAppID || bannerID == googleSampleBannerID
+            || appID.contains("3940256099942544") || bannerID.contains("3940256099942544") {
+            return .invalid
+        }
+
+        let appPattern = #"^ca-app-pub-(\d{16})~\d{10}$"#
+        let bannerPattern = #"^ca-app-pub-(\d{16})/\d{10}$"#
+        guard let appMatch = appID.range(of: appPattern, options: .regularExpression),
+              let bannerMatch = bannerID.range(of: bannerPattern, options: .regularExpression) else { return .invalid }
+        let appPublisher = String(appID[appMatch]).split(whereSeparator: { $0 == "-" || $0 == "~" })[3]
+        let bannerPublisher = String(bannerID[bannerMatch]).split(whereSeparator: { $0 == "-" || $0 == "/" })[3]
+        return appPublisher == bannerPublisher ? .production : .invalid
+    }
+}
+
 @MainActor
 final class PurchaseManager: ObservableObject {
     static let removeAdsProductID = "com.worksbienstudios.shrinkflationpricescanner.removeads"
@@ -17,7 +46,7 @@ final class PurchaseManager: ObservableObject {
 
     deinit { updatesTask?.cancel() }
 
-    func start() async {
+    func resolveEntitlement() async {
         if updatesTask == nil {
             updatesTask = Task { [weak self] in
                 for await update in StoreKit.Transaction.updates {
@@ -31,6 +60,11 @@ final class PurchaseManager: ObservableObject {
         }
 
         errorMessage = nil
+        await refreshEntitlements()
+    }
+
+    func loadProductMetadata() async {
+        errorMessage = nil
         do {
             product = try await Product.products(for: [Self.removeAdsProductID]).first
             if product == nil {
@@ -39,7 +73,6 @@ final class PurchaseManager: ObservableObject {
         } catch {
             errorMessage = AppLocalization.text("purchase.load_failed")
         }
-        await refreshEntitlements()
     }
 
     func purchaseRemoveAds() async {
@@ -102,9 +135,25 @@ final class AdManager: ObservableObject {
     @Published private(set) var canRequestAds = false
     @Published private(set) var privacyOptionsRequired = false
     @Published var errorMessage: String?
+    @Published private(set) var mode: AdMode = .invalid
     private var didStartAds = false
 
     func prepareAds() async {
+        mode = AdConfiguration.mode()
+        switch mode {
+        case .googleSampleTest:
+            privacyOptionsRequired = false
+            await startAdsIfNeeded()
+            canRequestAds = true
+            return
+        case .invalid:
+            privacyOptionsRequired = false
+            canRequestAds = false
+            return
+        case .production:
+            break
+        }
+
         let parameters = RequestParameters()
         let consentError: Error? = await withCheckedContinuation { continuation in
             ConsentInformation.shared.requestConsentInfoUpdate(with: parameters) { error in
@@ -121,22 +170,28 @@ final class AdManager: ObservableObject {
 
         privacyOptionsRequired = ConsentInformation.shared.privacyOptionsRequirementStatus == .required
         canRequestAds = ConsentInformation.shared.canRequestAds
-        guard canRequestAds, !didStartAds else { return }
+        guard canRequestAds else { return }
 
         if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
             _ = await ATTrackingManager.requestTrackingAuthorization()
         }
-        await MobileAds.shared.start()
-        didStartAds = true
+        await startAdsIfNeeded()
     }
 
     func presentPrivacyOptions() async {
+        guard mode == .production else { return }
         do {
             try await ConsentForm.presentPrivacyOptionsForm(from: nil)
             canRequestAds = ConsentInformation.shared.canRequestAds
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    private func startAdsIfNeeded() async {
+        guard !didStartAds else { return }
+        await MobileAds.shared.start()
+        didStartAds = true
     }
 }
 
@@ -148,39 +203,40 @@ struct PersistentAdStrip: View {
     @State private var reservedHeight: CGFloat = 64
 
     var body: some View {
-        Group {
-            if !purchaseManager.hasRemovedAds {
-                GeometryReader { proxy in
-                    ZStack {
-                        HouseBanner(purchaseManager: purchaseManager) { showingPurchase = true }
-                        if adManager.canRequestAds {
-                            let width = max(proxy.size.width, 320)
-                            let size = currentOrientationAnchoredAdaptiveBanner(width: width)
-                            BannerViewContainer(adSize: size) { loaded in
-                                withAnimation(.easeInOut(duration: 0.2)) { adLoaded = loaded }
-                            }
-                                .id(Int(size.size.width.rounded()))
-                                .frame(width: size.size.width, height: size.size.height)
-                                .opacity(adLoaded ? 1 : 0)
-                                .allowsHitTesting(adLoaded)
-                                .onAppear { reserveBannerHeight(size.size.height) }
-                                .onChange(of: proxy.size.width) { _, newWidth in
-                                    adLoaded = false
-                                    reserveBannerHeight(currentOrientationAnchoredAdaptiveBanner(width: max(newWidth, 320)).size.height)
-                                }
-                        }
-                    }
-                }
-                .frame(height: reservedHeight)
-                .background(.regularMaterial)
-                .accessibilityElement(children: .contain)
-                .sheet(isPresented: $showingPurchase) { RemoveBannerView() }
+        ZStack {
+            Color.clear.frame(height: reservedHeight)
+            if !adLoaded || !adManager.canRequestAds {
+                HouseBanner(purchaseManager: purchaseManager) { showingPurchase = true }
             }
         }
-        .onChange(of: purchaseManager.hasRemovedAds) { _, hasRemovedAds in
-            guard !hasRemovedAds else { return }
-            Task { await adManager.prepareAds() }
+        .overlay {
+            if adManager.canRequestAds {
+                GeometryReader { proxy in
+                    let width = max(proxy.size.width, 320)
+                    let size = currentOrientationAnchoredAdaptiveBanner(width: width)
+                    BannerViewContainer(adSize: size) { loaded in
+                        adLoaded = loaded
+                    }
+                        .id(Int(size.size.width.rounded()))
+                        .frame(width: size.size.width, height: size.size.height)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .opacity(adLoaded ? 1 : 0)
+                        .allowsHitTesting(adLoaded)
+                        .accessibilityHidden(!adLoaded)
+                        .onAppear { reserveBannerHeight(size.size.height) }
+                        .onChange(of: proxy.size.width) { _, newWidth in
+                            adLoaded = false
+                            reserveBannerHeight(currentOrientationAnchoredAdaptiveBanner(width: max(newWidth, 320)).size.height)
+                        }
+                }
+            }
         }
+        .background(.regularMaterial)
+        .accessibilityElement(children: .contain)
+        .onChange(of: adManager.canRequestAds) { _, canRequestAds in
+            if !canRequestAds { adLoaded = false }
+        }
+        .sheet(isPresented: $showingPurchase) { RemoveBannerView() }
     }
 
     private func reserveBannerHeight(_ adHeight: CGFloat) {
@@ -189,35 +245,109 @@ struct PersistentAdStrip: View {
 }
 
 private struct HouseBanner: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ObservedObject var purchaseManager: PurchaseManager
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 10) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 7).fill(Color.blue.opacity(0.1)).frame(width: 30, height: 30)
-                    Image(systemName: "rectangle.slash").font(.caption.weight(.bold)).foregroundStyle(.blue)
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(alignment: .top, spacing: 9) {
+                            bannerIcon
+                            bannerCopy(wrapped: true)
+                        }
+                        bannerAction
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    .fixedSize(horizontal: false, vertical: true)
+                } else {
+                    HStack(spacing: 9) {
+                        bannerIcon
+                        bannerCopy(wrapped: false)
+                        Spacer(minLength: 0)
+                        bannerAction
+                    }
                 }
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("banner.remove")
-                        .font(.caption.weight(.semibold))
-                    Text("banner.one_time")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer(minLength: 0)
-                Text(purchaseManager.product?.displayPrice ?? AppLocalization.text("banner.action"))
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 9).padding(.vertical, 6)
-                    .background(Color.blue, in: Capsule())
             }
             .contentShape(Rectangle())
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 11)
+            .padding(.vertical, 7)
+            .background(
+                LinearGradient(
+                    colors: [.blue.opacity(0.13), .cyan.opacity(0.07)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ),
+                in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Color.blue.opacity(0.18), lineWidth: 1)
+            }
+            .padding(.horizontal, 8)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("banner.accessibility"))
+        .accessibilityValue(Text(verbatim: purchaseManager.product?.displayPrice ?? ""))
+    }
+
+    private var bannerIcon: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(LinearGradient(
+                    colors: [.blue, .cyan],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
+                .frame(width: 38, height: 38)
+            Image(systemName: "rectangle.slash.fill")
+                .font(.system(size: 17, weight: .bold))
+                .foregroundStyle(.white)
+        }
+        .accessibilityHidden(true)
+    }
+
+    @ViewBuilder
+    private func bannerCopy(wrapped: Bool) -> some View {
+        if wrapped {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("banner.remove").font(.caption.weight(.bold))
+                Text("banner.one_time").font(.caption2.weight(.medium)).foregroundStyle(.secondary)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+        } else {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("banner.remove")
+                    .font(.caption.weight(.bold))
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.9)
+                Text("banner.one_time")
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+            }
+        }
+    }
+
+    private var bannerAction: some View {
+        HStack(spacing: 4) {
+            Text(purchaseManager.product?.displayPrice ?? AppLocalization.text("banner.action"))
+                .lineLimit(1)
+            Image(systemName: "chevron.right")
+                .font(.caption2.weight(.heavy))
+                .accessibilityHidden(true)
+        }
+        .font(.caption.weight(.bold))
+        .foregroundStyle(.white)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .background(
+            LinearGradient(colors: [.blue, .cyan], startPoint: .leading, endPoint: .trailing),
+            in: Capsule()
+        )
     }
 }
 
